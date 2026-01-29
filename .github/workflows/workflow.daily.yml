@@ -1,0 +1,71 @@
+name: Nompower Daily Trend (Reddit RSS -> DeepSeek -> Site)
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 09:15 JST 毎日（UTC 00:15）
+    - cron: "15 0 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nompower-daily
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ensure state files
+        run: |
+          mkdir -p data site
+          test -f processed_urls.txt || touch processed_urls.txt
+          test -f data/articles.json || echo "[]" > data/articles.json
+
+      - name: Generate / Update site
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          python -m nompower_pipeline.generate
+
+      - name: Commit state (processed_urls + data)
+        run: |
+          set -e
+          git status --porcelain
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "nompower-bot"
+            git config user.email "nompower-bot@users.noreply.github.com"
+            git add processed_urls.txt data/articles.json
+            git commit -m "Daily update: state + metadata" || true
+            git push
+          else
+            echo "No changes to commit."
+          fi
+
+      - name: Deploy to gh-pages (publish ./site)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          # mikanntool.com “仲間”として固定（必要ならここだけ変える）
+          cname: nompower.mikanntool.com
