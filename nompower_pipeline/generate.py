@@ -405,7 +405,10 @@ def main() -> None:
         )
         return
 
-    body_html = deepseek_article(cfg, cand)
+    gen = deepseek_article(cfg, cand)
+    title = gen["title"]
+    body_html = gen["body_html"]
+
 
     ts = datetime.now(timezone.utc)
     ymd = ts.strftime("%Y-%m-%d")
