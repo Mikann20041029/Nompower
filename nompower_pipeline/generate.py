@@ -133,13 +133,17 @@ def pick_candidate(cfg: dict, processed: set[str], articles: list[dict]) -> dict
     return candidates[0] if candidates else None
 
 
-def deepseek_article(cfg: dict, item: dict) -> str:
+def deepseek_article(cfg: dict, item: dict) -> dict:
     ds = DeepSeekClient()
     model = cfg["generation"]["model"]
     target_words = int(cfg["generation"]["target_words"])
     temp = float(cfg["generation"]["temperature"])
 
-    title = item["title"]
+    # あとから自由に編集できるプロンプト（config.json）
+    title_style = cfg["generation"].get("title_prompt", "").strip()
+    body_style = cfg["generation"].get("body_prompt", "").strip().replace("{target_words}", str(target_words))
+
+    src_title = item["title"]
     link = item["link"]
     summary = item.get("summary", "")
     subreddit = item.get("subreddit", "")
@@ -149,10 +153,59 @@ def deepseek_article(cfg: dict, item: dict) -> str:
     system = (
         "You are an editorial writer for a tech/news digest site. "
         "Write in English only. Do not fabricate facts. If uncertain, label it clearly as speculation. "
-        "Be energetic and slightly hyped, but keep it accurate and non-defamatory. "
         "Avoid copyrighted copying; paraphrase and add original commentary and takeaways. "
-        "No adult content, hate, or self-harm content."
+        "No adult content, hate, or self-harm content. "
+        "Return STRICT JSON only."
     )
+
+    user = f"""
+You will generate BOTH a new headline and an article body.
+Return STRICT JSON ONLY:
+
+{{
+  "title": "...",
+  "body_html": "..."
+}}
+
+SOURCE INPUT:
+- Original title: {src_title}
+- Subreddit: r/{subreddit}
+- Permalink: {link}
+- RSS summary snippet (may be partial): {summary}
+- Signals: score={score}, comments={comments}
+
+TITLE INSTRUCTIONS:
+{title_style}
+
+BODY INSTRUCTIONS:
+{body_style}
+
+Hard rules:
+- Output JSON only (no markdown, no extra text).
+- "body_html" must be valid HTML body using <p>, <h2>, <ul><li> only.
+""".strip()
+
+    out = ds.chat(
+        model=model,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        temperature=temp,
+        max_tokens=2800,
+    )
+
+    # JSON parse + sanitize
+    try:
+        data = json.loads(out)
+        title = (data.get("title") or "").strip()
+        body_html = sanitize_llm_html(data.get("body_html") or "")
+        if not title:
+            title = src_title
+        return {"title": title, "body_html": body_html}
+    except Exception:
+        # 失敗時はRSSタイトルで継続（本文は返答をHTMLとして扱う）
+        return {"title": src_title, "body_html": sanitize_llm_html(out)}
 
     user = f"""
 Write an original article (HTML body only; use <p>, <h2>, <ul><li>) based on this Reddit post.
