@@ -1,3 +1,4 @@
+# .github/workflows/workflow.daily.yml
 name: Nompower Daily Trend (Reddit RSS -> DeepSeek -> Site)
 
 on:
@@ -8,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: nompower-daily
@@ -55,12 +57,78 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             git config user.name "nompower-bot"
             git config user.email "nompower-bot@users.noreply.github.com"
-            git add processed_urls.txt data/articles.json
+            git add processed_urls.txt data/articles.json data/last_run.json
             git commit -m "Daily update: state + metadata" || true
             git push
           else
             echo "No changes to commit."
           fi
+
+      - name: Deploy to gh-pages (publish ./site)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          cname: nompower.mikanntool.com
+
+      - name: Prepare Issue body (URLs)
+        if: always()
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          p = Path("data/last_run.json")
+          data = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+          status = os.getenv("JOB_STATUS","unknown")
+
+          created = data.get("created", False)
+          home = data.get("homepage_url","")
+          art = data.get("article_url","")
+          title = data.get("article_title","")
+          src = data.get("source_url","")
+          note = data.get("note","")
+
+          lines = []
+          lines.append(f"Run status: **{status}**")
+          if home:
+            lines.append(f"Homepage: {home}")
+          if created and art:
+            lines.append(f"New article: {art}")
+            if title:
+              lines.append(f"Title: {title}")
+            if src:
+              lines.append(f"Source (Reddit): {src}")
+          else:
+            lines.append("New article: (none)")
+            if note:
+              lines.append(f"Note: {note}")
+
+          Path("data/issue_body.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
+
+      - name: Post URLs to GitHub Issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          ISSUE_TITLE="Nompower Daily URLs"
+
+          if ! command -v gh >/dev/null 2>&1; then
+            sudo apt-get update -y
+            sudo apt-get install -y gh
+          fi
+
+          NUM=$(gh issue list --search "in:title \"$ISSUE_TITLE\"" --json number --jq '.[0].number' || true)
+          if [ -z "$NUM" ]; then
+            gh issue create --title "$ISSUE_TITLE" --body-file data/issue_body.md
+          else
+            gh issue comment "$NUM" --body-file data/issue_body.md
+          fi
+
 
       - name: Deploy to gh-pages (publish ./site)
         uses: peaceiris/actions-gh-pages@v4
