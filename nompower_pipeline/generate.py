@@ -418,7 +418,7 @@ def main() -> None:
 
     entry = {
         "id": f"{ymd}-{slug}",
-        "title": cand["title"],
+        "title": title,
         "path": path,
         "published_ts": ts.isoformat(timespec="seconds"),
         "source_url": cand["link"],
