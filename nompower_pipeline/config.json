@@ -1,0 +1,39 @@
+{
+  "site": {
+    "brand_name": "Nompower",
+    "base_url": "https://nompower.mikanntool.com",
+    "contact_email": "contact@mikanntool.com"
+  },
+  "feeds": {
+    "reddit_rss": [
+      "https://www.reddit.com/r/technology/new/.rss",
+      "https://www.reddit.com/r/artificial/new/.rss",
+      "https://www.reddit.com/r/programming/new/.rss"
+    ]
+  },
+  "generation": {
+    "model": "deepseek-chat",
+    "target_words": 650,
+    "temperature": 0.85
+  },
+  "safety": {
+    "blocked_subreddits": [
+      "nsfw",
+      "porn",
+      "sex",
+      "hentai",
+      "gore",
+      "violence",
+      "selfharm"
+    ],
+    "blocked_keywords": [
+      "nsfw",
+      "porn",
+      "hentai",
+      "onlyfans",
+      "gore",
+      "suicide",
+      "self-harm"
+    ]
+  }
+}
