@@ -263,7 +263,8 @@ def write_rss_feed(cfg: dict, articles: list[dict], limit: int = 10) -> None:
     parts.append(f"<title>{_html.escape(site_title)}</title>")
     parts.append(f"<link>{_html.escape(base_url + '/')}</link>")
     parts.append(f"<description>{_html.escape(site_desc)}</description>")
-    parts.append(f"<atom:link xmlns:atom='http://www.w3.org/2005/Atom' href='{_html.escape(feed_url)}' rel='self' type='application/rss+xml' />")
+    parts.append(f"<lastBuildDate>{_html.escape(rfc822(now_utc_iso()))}</lastBuildDate>")
+
 
     for a in items:
         url = f"{base_url}{a['path']}"
