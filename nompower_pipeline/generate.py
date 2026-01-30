@@ -139,6 +139,12 @@ def deepseek_article(cfg: dict, item: dict) -> str:
 
     user = f"""
 Write an original article (HTML body only; use <p>, <h2>, <ul><li>) based on this Reddit post.
+IMPORTANT:
+- Do NOT repeat the post title in the body.
+- Do NOT output <h1> under any circumstances.
+- Do NOT restate the title as a paragraph.
+- Start directly with a short hook paragraph (<p>).
+- Use <h2> for section headings only.
 
 Post title: {title}
 Permalink: {link}
