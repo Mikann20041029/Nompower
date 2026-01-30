@@ -243,6 +243,49 @@ def related_articles(current: dict, articles: list[dict], k: int = 6) -> list[di
     scored.sort(key=lambda x: x[0], reverse=True)
     return [a for s, a in scored[:k] if s > 0.05]
 
+def write_rss_feed(cfg: dict, articles: list[dict], limit: int = 10) -> None:
+    base_url = cfg["site"]["base_url"].rstrip("/")
+    site_title = cfg["site"].get("title", "Nompower")
+    site_desc = cfg["site"].get("description", "Daily digest")
+    feed_url = f"{base_url}/feed.xml"
+
+    items = sorted(articles, key=lambda a: a.get("published_ts", ""), reverse=True)[:limit]
+
+    def rfc822(iso: str) -> str:
+        # 例: 2026-01-30T08:00:00+00:00 -> RFC822
+        dt = datetime.fromisoformat(iso.replace("Z", "+00:00"))
+        return dt.astimezone(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
+
+    parts = []
+    parts.append('<?xml version="1.0" encoding="UTF-8"?>')
+    parts.append('<rss version="2.0">')
+    parts.append("<channel>")
+    parts.append(f"<title>{_html.escape(site_title)}</title>")
+    parts.append(f"<link>{_html.escape(base_url + '/')}</link>")
+    parts.append(f"<description>{_html.escape(site_desc)}</description>")
+    parts.append(f"<atom:link xmlns:atom='http://www.w3.org/2005/Atom' href='{_html.escape(feed_url)}' rel='self' type='application/rss+xml' />")
+
+    for a in items:
+        url = f"{base_url}{a['path']}"
+        title = a.get("title", "")
+        pub = a.get("published_ts", now_utc_iso())
+        summary = a.get("summary", "") or ""
+        if not summary:
+            # summaryが無い場合は本文を短く（タグ除去はせず、最低限で）
+            summary = re.sub(r"\s+", " ", re.sub(r"(?is)<[^>]+>", " ", a.get("body_html", ""))).strip()[:240]
+
+        parts.append("<item>")
+        parts.append(f"<title>{_html.escape(title)}</title>")
+        parts.append(f"<link>{_html.escape(url)}</link>")
+        parts.append(f"<guid isPermaLink='true'>{_html.escape(url)}</guid>")
+        parts.append(f"<pubDate>{_html.escape(rfc822(pub))}</pubDate>")
+        parts.append(f"<description>{_html.escape(summary)}</description>")
+        parts.append("</item>")
+
+    parts.append("</channel>")
+    parts.append("</rss>")
+
+    (SITE_DIR / "feed.xml").write_text("\n".join(parts) + "\n", encoding="utf-8")
 
 def build_site(cfg: dict, articles: list[dict]) -> None:
     SITE_DIR.mkdir(parents=True, exist_ok=True)
