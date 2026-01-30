@@ -1,4 +1,4 @@
-name: Post to Mastodon from Issue
+name: Mastodon from Issue #1
 
 on:
   issues:
@@ -8,19 +8,13 @@ permissions:
   issues: read
   contents: read
 
-concurrency:
-  group: mastodon-post-from-issue
-  cancel-in-progress: false
-
 jobs:
-  run:
+  post:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
@@ -29,15 +23,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Run (only when issue body contains New article)
+      - name: Run worker
         env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
-          ISSUE_USER: ${{ github.event.issue.user.login }}
+
           MASTODON_BASE_URL: ${{ secrets.MASTODON_BASE_URL }}
           MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          DEEPSEEK_API_BASE: ${{ secrets.DEEPSEEK_API_BASE }}
-          DEEPSEEK_MODEL: ${{ secrets.DEEPSEEK_MODEL }}
         run: |
-          python scripts/mastodon_issue_worker.py
+          python scripts/mastodon_worker.py
