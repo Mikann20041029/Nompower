@@ -367,6 +367,8 @@ def main() -> None:
         return
 
     body_html = deepseek_article(cfg, cand)
+    body_html = strip_leading_duplicate_title(body_html, cand["title"])
+
 
     ts = datetime.now(timezone.utc)
     ymd = ts.strftime("%Y-%m-%d")
