@@ -125,6 +125,15 @@ body{
   padding: 16px;
   margin: 14px 0;
 }
+/* Ranking card: gold border + subtle glow (only this section) */
+#ranking.card{
+  border: 1px solid rgba(255, 215, 0, 0.55);         /* gold */
+  box-shadow:
+    0 0 0 1px rgba(255, 215, 0, 0.18) inset,         /* inner rim */
+    0 0 22px rgba(255, 215, 0, 0.18),                /* glow */
+    var(--shadow);                                   /* keep existing shadow */
+}
+
 
 
 
