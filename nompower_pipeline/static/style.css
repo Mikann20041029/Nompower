@@ -125,14 +125,18 @@ body{
   padding: 16px;
   margin: 14px 0;
 }
-/* Ranking card: gold border + subtle glow (only this section) */
+/* Ranking card: stronger gold glow (only this section) */
 #ranking.card{
-  border: 1px solid rgba(255, 215, 0, 0.55);         /* gold */
+  border: 1px solid rgba(255, 215, 0, 0.65); /* a bit stronger */
   box-shadow:
-    0 0 0 1px rgba(255, 215, 0, 0.18) inset,         /* inner rim */
-    0 0 22px rgba(255, 215, 0, 0.18),                /* glow */
-    var(--shadow);                                   /* keep existing shadow */
+    0 0 0 1px rgba(255, 215, 0, 0.22) inset, /* inner rim */
+    0 0 0 2px rgba(255, 215, 0, 0.10),        /* thin outer edge */
+    0 0 18px rgba(255, 215, 0, 0.22),         /* glow near */
+    0 0 42px rgba(255, 215, 0, 0.18),         /* glow mid */
+    0 0 90px rgba(255, 170, 0, 0.14),         /* warm bloom far */
+    var(--shadow);
 }
+
 
 
 
