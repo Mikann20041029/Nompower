@@ -33,9 +33,11 @@ SITE_DIR = ROOT / "site"
 TEMPLATES_DIR = ROOT / "nompower_pipeline" / "templates"
 STATIC_DIR = ROOT / "nompower_pipeline" / "static"
 
+# === Ads (strings must be standalone and syntactically valid) ===
 ADS_TOP = """<script src="https://pl28593834.effectivegatecpm.com/bf/0c/41/bf0c417e61a02af02bb4fab871651c1b.js"></script>"""
 ADS_MID = """<script src="https://quge5.com/88/tag.min.js" data-zone="206389" async data-cfasync="false"></script>"""
-ADS_BOTTOM = """<script type="text/javascript">
+ADS_BOTTOM = """<script type="text/javascript"></script>"""  # keep simple; replace with your actual bottom ad if needed
+
 ads_rail_left = """
 <script src="https://pl28593834.effectivegatecpm.com/bf/0c/41/bf0c417e61a02af02bb4fab871651c1b.js"></script>
 """.strip()
@@ -178,6 +180,8 @@ Requirements:
         max_tokens=2400,
     )
     return sanitize_llm_html(out)
+
+
 def strip_leading_duplicate_title(body_html: str, title: str) -> str:
     """
     Remove duplicated title that LLM sometimes outputs at the beginning of body_html.
@@ -199,7 +203,6 @@ def strip_leading_duplicate_title(body_html: str, title: str) -> str:
     def _same(text: str) -> bool:
         x = _html.unescape(text or "").strip()
         x = re.sub(r"\s+", " ", x).lower()
-        # exact match or extremely close match
         return x == t_norm
 
     s = body_html.lstrip()
@@ -207,25 +210,24 @@ def strip_leading_duplicate_title(body_html: str, title: str) -> str:
     # 1) remove leading <h1>...</h1> if it matches title
     m = re.match(r"(?is)^\s*<h1[^>]*>(.*?)</h1>\s*", s)
     if m and _same(m.group(1)):
-        return s[m.end():].lstrip()
+        return s[m.end() :].lstrip()
 
     # 2) remove leading <h2>...</h2> if it matches title
     m = re.match(r"(?is)^\s*<h2[^>]*>(.*?)</h2>\s*", s)
     if m and _same(m.group(1)):
-        return s[m.end():].lstrip()
+        return s[m.end() :].lstrip()
 
     # 3) remove leading <p>...</p> if it matches title
     m = re.match(r"(?is)^\s*<p[^>]*>(.*?)</p>\s*", s)
     if m:
-        # strip tags inside <p> for comparison
         inner = re.sub(r"(?is)<[^>]+>", "", m.group(1))
         if _same(inner):
-            return s[m.end():].lstrip()
+            return s[m.end() :].lstrip()
 
     # 4) remove leading plain-text title line (defensive)
     m = re.match(r"(?is)^\s*([^<\n]{10,200})\s*(?:<br\s*/?>|\n)\s*", s)
     if m and _same(m.group(1)):
-        return s[m.end():].lstrip()
+        return s[m.end() :].lstrip()
 
     return body_html
 
@@ -246,16 +248,15 @@ def related_articles(current: dict, articles: list[dict], k: int = 6) -> list[di
     scored.sort(key=lambda x: x[0], reverse=True)
     return [a for s, a in scored[:k] if s > 0.05]
 
+
 def write_rss_feed(cfg: dict, articles: list[dict], limit: int = 10) -> None:
     base_url = cfg["site"]["base_url"].rstrip("/")
     site_title = cfg["site"].get("title", "Nompower")
     site_desc = cfg["site"].get("description", "Daily digest")
-    feed_url = f"{base_url}/feed.xml"
 
     items = sorted(articles, key=lambda a: a.get("published_ts", ""), reverse=True)[:limit]
 
     def rfc822(iso: str) -> str:
-        # 例: 2026-01-30T08:00:00+00:00 -> RFC822
         dt = datetime.fromisoformat(iso.replace("Z", "+00:00"))
         return dt.astimezone(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
 
@@ -268,14 +269,12 @@ def write_rss_feed(cfg: dict, articles: list[dict], limit: int = 10) -> None:
     parts.append(f"<description>{_html.escape(site_desc)}</description>")
     parts.append(f"<lastBuildDate>{_html.escape(rfc822(now_utc_iso()))}</lastBuildDate>")
 
-
     for a in items:
         url = f"{base_url}{a['path']}"
         title = a.get("title", "")
         pub = a.get("published_ts", now_utc_iso())
         summary = a.get("summary", "") or ""
         if not summary:
-            # summaryが無い場合は本文を短く（タグ除去はせず、最低限で）
             summary = re.sub(r"\s+", " ", re.sub(r"(?is)<[^>]+>", " ", a.get("body_html", ""))).strip()[:240]
 
         parts.append("<item>")
@@ -290,7 +289,7 @@ def write_rss_feed(cfg: dict, articles: list[dict], limit: int = 10) -> None:
     parts.append("</rss>")
 
     (SITE_DIR / "feed.xml").write_text("\n".join(parts) + "\n", encoding="utf-8")
-   
+
 
 def build_site(cfg: dict, articles: list[dict]) -> None:
     SITE_DIR.mkdir(parents=True, exist_ok=True)
@@ -321,21 +320,25 @@ Sitemap: {base_url}/sitemap.xml
 
     ranking = compute_rankings(articles)[:10]
     new_articles = sorted(articles, key=lambda a: a.get("published_ts", ""), reverse=True)[:10]
-    
+
     write_rss_feed(cfg, articles, limit=10)
+
+    base_ctx = {
+        "site": cfg["site"],
+        "ranking": ranking,
+        "new_articles": new_articles,
+        "ads_top": ADS_TOP,
+        "ads_mid": ADS_MID,
+        "ads_bottom": ADS_BOTTOM,
+        "ads_rail_left": ads_rail_left,
+        "ads_rail_right": ads_rail_right,
+        "now_iso": now_utc_iso(),
+    }
 
     render_to_file(
         jenv,
         "index.html",
-        {
-            "site": cfg["site"],
-            "ranking": ranking,
-            "new_articles": new_articles,
-            "ads_top": ADS_TOP,
-            "ads_mid": ADS_MID,
-            "ads_bottom": ADS_BOTTOM,
-            "now_iso": now_utc_iso(),
-        },
+        base_ctx,
         SITE_DIR / "index.html",
     )
 
@@ -348,38 +351,29 @@ Sitemap: {base_url}/sitemap.xml
     ]
 
     for slug, title, body in static_pages:
+        ctx = dict(base_ctx)
+        ctx.update({"page_title": title, "page_body": body})
         render_to_file(
             jenv,
             "static.html",
-            {
-                "site": cfg["site"],
-                "page_title": title,
-                "page_body": body,
-                "ads_top": ADS_TOP,
-                "ads_mid": ADS_MID,
-                "ads_bottom": ADS_BOTTOM,
-                "now_iso": now_utc_iso(),
-            },
+            ctx,
             SITE_DIR / f"{slug}.html",
         )
 
     for a in articles:
         rel = related_articles(a, articles, k=6)
+        ctx = dict(base_ctx)
+        ctx.update(
+            {
+                "a": a,
+                "related": rel,
+                "policy_block": FIXED_POLICY_BLOCK.format(contact_email=cfg["site"]["contact_email"]),
+            }
+        )
         render_to_file(
             jenv,
             "article.html",
-            {
-                "site": cfg["site"],
-                "a": a,
-                "related": rel,
-                "ranking": ranking,
-                "new_articles": new_articles,
-                "policy_block": FIXED_POLICY_BLOCK.format(contact_email=cfg["site"]["contact_email"]),
-                "ads_top": ADS_TOP,
-                "ads_mid": ADS_MID,
-                "ads_bottom": ADS_BOTTOM,
-                "now_iso": now_utc_iso(),
-            },
+            ctx,
             SITE_DIR / a["path"].lstrip("/"),
         )
 
@@ -418,7 +412,6 @@ def main() -> None:
 
     body_html = deepseek_article(cfg, cand)
     body_html = strip_leading_duplicate_title(body_html, cand["title"])
-
 
     ts = datetime.now(timezone.utc)
     ymd = ts.strftime("%Y-%m-%d")
