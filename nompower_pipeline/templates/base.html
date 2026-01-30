@@ -45,29 +45,23 @@
     </nav>
   </header>
 
-  <main class="wrap">
-    <section class="ad-slot ad-top">
-      {{ ads_top | safe }}
-    </section>
+  <div class="page-grid">
+  <aside class="ad-rail ad-rail-left">
+    <div class="ad-rail-inner">
+      {{ ads_rail_left | safe }}
+    </div>
+  </aside>
 
-    {{ content | safe }}
-
-    <section class="ad-slot ad-bottom">
-      {{ ads_bottom | safe }}
-    </section>
-
-    <footer class="footer">
-      <div class="foot-links">
-        <a href="/privacy.html">Privacy</a>
-        <a href="/terms.html">Terms</a>
-        <a href="/disclaimer.html">Disclaimer</a>
-      </div>
-      <div class="foot-meta">
-        <span>Updated: {{ now_iso }}</span>
-        <span>·</span>
-        <span><a href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a></span>
-      </div>
-    </footer>
+  <main class="page-main">
+    <div class="wrap">
+      {# ここに今までのメイン本文/コンテンツ #}
+      {{ content | safe }}
+    </div>
   </main>
-</body>
-</html>
+
+  <aside class="ad-rail ad-rail-right">
+    <div class="ad-rail-inner">
+      {{ ads_rail_right | safe }}
+    </div>
+  </aside>
+</div>
