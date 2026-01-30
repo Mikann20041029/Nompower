@@ -175,6 +175,56 @@ Requirements:
         max_tokens=2400,
     )
     return sanitize_llm_html(out)
+def strip_leading_duplicate_title(body_html: str, title: str) -> str:
+    """
+    Remove duplicated title that LLM sometimes outputs at the beginning of body_html.
+    We keep the template H1 (a.title) as the single source of truth.
+
+    Removes if the first:
+    - <h1> equals title
+    - <h2> equals title
+    - <p> equals title
+    - plain text line equals title (rare)
+    """
+    if not body_html or not title:
+        return body_html
+
+    # Normalize title for comparison
+    t = _html.unescape(title).strip()
+    t_norm = re.sub(r"\s+", " ", t).lower()
+
+    def _same(text: str) -> bool:
+        x = _html.unescape(text or "").strip()
+        x = re.sub(r"\s+", " ", x).lower()
+        # exact match or extremely close match
+        return x == t_norm
+
+    s = body_html.lstrip()
+
+    # 1) remove leading <h1>...</h1> if it matches title
+    m = re.match(r"(?is)^\s*<h1[^>]*>(.*?)</h1>\s*", s)
+    if m and _same(m.group(1)):
+        return s[m.end():].lstrip()
+
+    # 2) remove leading <h2>...</h2> if it matches title
+    m = re.match(r"(?is)^\s*<h2[^>]*>(.*?)</h2>\s*", s)
+    if m and _same(m.group(1)):
+        return s[m.end():].lstrip()
+
+    # 3) remove leading <p>...</p> if it matches title
+    m = re.match(r"(?is)^\s*<p[^>]*>(.*?)</p>\s*", s)
+    if m:
+        # strip tags inside <p> for comparison
+        inner = re.sub(r"(?is)<[^>]+>", "", m.group(1))
+        if _same(inner):
+            return s[m.end():].lstrip()
+
+    # 4) remove leading plain-text title line (defensive)
+    m = re.match(r"(?is)^\s*([^<\n]{10,200})\s*(?:<br\s*/?>|\n)\s*", s)
+    if m and _same(m.group(1)):
+        return s[m.end():].lstrip()
+
+    return body_html
 
 
 def compute_rankings(articles: list[dict]) -> list[dict]:
