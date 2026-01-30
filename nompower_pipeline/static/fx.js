@@ -44,9 +44,34 @@
     "#0F0A06", // dark cocoa
     "#0A0A0A"  // near-black neutral
   ];
-  const pick = bgPalette[Math.floor(Math.random() * bgPalette.length)];
-  document.documentElement.style.setProperty("--bg", pick);
+
+  const pickHex = bgPalette[Math.floor(Math.random() * bgPalette.length)];
+
+  function hexToRgb(hex){
+    const h = hex.replace("#","").trim();
+    const v = h.length === 3 ? h.split("").map(c=>c+c).join("") : h;
+    const n = parseInt(v, 16);
+    return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+  }
+
+  // white text を邪魔しない “霞” になるよう、元色を少しだけ明るくして alpha を薄くする
+  function tintRgba(hex, mixToWhite, a){
+    const { r, g, b } = hexToRgb(hex);
+    const rr = Math.round(r + (255 - r) * mixToWhite);
+    const gg = Math.round(g + (255 - g) * mixToWhite);
+    const bb = Math.round(b + (255 - b) * mixToWhite);
+    return `rgba(${rr},${gg},${bb},${a})`;
+  }
+
+  // 背景ベース
+  document.documentElement.style.setProperty("--bg", pickHex);
+
+  // 3つの “にじみ” を同系色で少し変えて作る（個性は出るが読みやすさは維持）
+  document.documentElement.style.setProperty("--blob1", tintRgba(pickHex, 0.55, 0.14));
+  document.documentElement.style.setProperty("--blob2", tintRgba(pickHex, 0.40, 0.12));
+  document.documentElement.style.setProperty("--blob3", tintRgba(pickHex, 0.28, 0.10));
 })();
+
 
   // 粒子（CSSアニメ）
   const host = document.getElementById("particles");
