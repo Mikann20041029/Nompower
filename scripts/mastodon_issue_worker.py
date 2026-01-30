@@ -4,60 +4,59 @@ import time
 import requests
 import sys
 
+EVENT_NAME = os.getenv("EVENT_NAME", "")
 ISSUE_NUMBER = os.getenv("ISSUE_NUMBER", "")
 ISSUE_TITLE = os.getenv("ISSUE_TITLE", "")
-COMMENT_BODY = os.getenv("COMMENT_BODY", "")
+ISSUE_BODY = os.getenv("ISSUE_BODY", "") or ""
+COMMENT_BODY = os.getenv("COMMENT_BODY", "") or ""
 
-# ===== 反応条件 =====
-# 1) Issue #1 だけ
-# 2) コメントに Run status: success がある
-# 3) コメントに New article: がある
+# Issue #1 以外は無視
 if ISSUE_NUMBER != "1":
     sys.exit(0)
 
-if "Run status: success" not in COMMENT_BODY:
+# issuesイベントなら本文、issue_commentならコメント本文を使う
+text = ISSUE_BODY if EVENT_NAME == "issues" else COMMENT_BODY
+if not text:
     sys.exit(0)
 
-urls = re.findall(r"New article:\s*(https?://\S+)", COMMENT_BODY)
+# 条件（あなたが指定したやつ）
+if "Run status: success" not in text:
+    sys.exit(0)
+
+urls = re.findall(r"New article:\s*(https?://\S+)", text)
 if not urls:
     sys.exit(0)
 
-# コメント内の New article は基本1個なので [-1] でOK
 article_url = urls[-1].strip()
 
 BASE = os.environ["MASTODON_BASE_URL"].rstrip("/")
 TOKEN = os.environ["MASTODON_ACCESS_TOKEN"]
 
-def post_mastodon(text: str):
+def post_mastodon(msg: str):
     r = requests.post(
         f"{BASE}/api/v1/statuses",
         headers={"Authorization": f"Bearer {TOKEN}"},
-        data={"status": text, "visibility": "public"},
+        data={"status": msg, "visibility": "public"},
         timeout=25,
     )
     print("Mastodon:", r.status_code, r.text[:200])
     r.raise_for_status()
 
-# ===== 即時投稿（URLあり）=====
+# 即時投稿（URLあり）
 post_mastodon(
     "Found a useful article today.\n"
     "Quick share (testing my pipeline).\n"
     f"{article_url}"
 )
 
-# ===== 15分待つ =====
+# 15分後投稿（URLなし）
 time.sleep(15 * 60)
 
-# ===== DeepSeek 投稿（URLなし・生活感）=====
 api_key = os.getenv("DEEPSEEK_API_KEY", "").strip()
-
 if api_key:
     r = requests.post(
         "https://api.deepseek.com/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        },
+        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
         json={
             "model": "deepseek-chat",
             "messages": [
@@ -71,8 +70,8 @@ if api_key:
     )
     print("DeepSeek:", r.status_code, r.text[:200])
     r.raise_for_status()
-    text = r.json()["choices"][0]["message"]["content"].strip()
+    text2 = r.json()["choices"][0]["message"]["content"].strip()
 else:
-    text = "Tried to be productive today. Ended up reorganizing tabs for 10 minutes. That counts, right?"
+    text2 = "Tried to be productive today… ended up organizing my downloads folder. Again."
 
-post_mastodon(text)
+post_mastodon(text2)
