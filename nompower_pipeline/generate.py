@@ -286,6 +286,7 @@ def write_rss_feed(cfg: dict, articles: list[dict], limit: int = 10) -> None:
     parts.append("</rss>")
 
     (SITE_DIR / "feed.xml").write_text("\n".join(parts) + "\n", encoding="utf-8")
+    write_rss_feed(cfg, articles, limit=10)
 
 def build_site(cfg: dict, articles: list[dict]) -> None:
     SITE_DIR.mkdir(parents=True, exist_ok=True)
