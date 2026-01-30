@@ -36,10 +36,6 @@ STATIC_DIR = ROOT / "nompower_pipeline" / "static"
 ADS_TOP = """<script src="https://pl28593834.effectivegatecpm.com/bf/0c/41/bf0c417e61a02af02bb4fab871651c1b.js"></script>"""
 ADS_MID = """<script src="https://quge5.com/88/tag.min.js" data-zone="206389" async data-cfasync="false"></script>"""
 ADS_BOTTOM = """<script type="text/javascript">
-var infolinks_pid = 3443178;
-var infolinks_wsid = 0;
-</script>
-<script type="text/javascript" src="https://resources.infolinks.com/js/infolinks_main.js"></script>"""
 
 FIXED_POLICY_BLOCK = """
 <p><strong>Policy & Transparency (to stay search-friendly)</strong></p>
