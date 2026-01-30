@@ -31,6 +31,22 @@
   root.style.setProperty("--neon1", c1);
   root.style.setProperty("--neon2", c2);
   root.style.setProperty("--neon3", c3);
+// Random dark background base (8 variants)
+// Goal: add variety without making white text hard to read.
+(function setRandomBgBase(){
+  const bgPalette = [
+    "#070A12", // original deep navy
+    "#0E0610", // dark plum
+    "#14060A", // dark wine
+    "#12070A", // dark maroon
+    "#160A06", // dark brown-red
+    "#1A0D05", // dark burnt orange
+    "#0F0A06", // dark cocoa
+    "#0A0A0A"  // near-black neutral
+  ];
+  const pick = bgPalette[Math.floor(Math.random() * bgPalette.length)];
+  document.documentElement.style.setProperty("--bg", pick);
+})();
 
   // 粒子（CSSアニメ）
   const host = document.getElementById("particles");
