@@ -1,89 +1,85 @@
 import os
-import re
 import time
+import re
 import requests
-import sys
 
-ISSUE_NUMBER = os.getenv("ISSUE_NUMBER", "")
-ISSUE_TITLE = os.getenv("ISSUE_TITLE", "")
-COMMENT_BODY = os.getenv("COMMENT_BODY", "")
+GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
+REPO = os.environ["REPO"]
+ISSUE_NUMBER = os.environ["ISSUE_NUMBER"]
 
-# ===== 反応条件（あなたが指定した条件）=====
-# 1) Issue #1 のコメントだけ
-# 2) コメントに "Run status: success" がある
-# 3) コメントに "New article:" がある
-if ISSUE_NUMBER != "1":
-    sys.exit(0)
+MASTODON_BASE_URL = os.environ["MASTODON_BASE_URL"].rstrip("/")
+MASTODON_ACCESS_TOKEN = os.environ["MASTODON_ACCESS_TOKEN"]
+DEEPSEEK_API_KEY = os.environ["DEEPSEEK_API_KEY"]
 
-if "Run status: success" not in COMMENT_BODY:
-    sys.exit(0)
+HEADERS = {
+    "Authorization": f"Bearer {GITHUB_TOKEN}",
+    "Accept": "application/vnd.github+json",
+}
 
-urls = re.findall(r"New article:\s*(https?://\S+)", COMMENT_BODY)
-if not urls:
-    sys.exit(0)
+def get_latest_comment():
+    url = f"https://api.github.com/repos/{REPO}/issues/{ISSUE_NUMBER}/comments"
+    r = requests.get(url, headers=HEADERS)
+    r.raise_for_status()
+    comments = r.json()
+    return comments[-1]["body"] if comments else ""
 
-# コメント内に New article が複数あっても最後を使う
-article_url = urls[-1].strip()
+def extract_article_url(text):
+    if "Run status: success" not in text:
+        return None
+    m = re.search(r"New article:\s*(https?://\S+)", text)
+    return m.group(1) if m else None
 
-# ===== Mastodon設定 =====
-BASE = os.environ.get("MASTODON_BASE_URL", "").rstrip("/")
-TOKEN = os.environ.get("MASTODON_ACCESS_TOKEN", "").strip()
-
-if not BASE or not TOKEN:
-    print("Missing MASTODON_BASE_URL or MASTODON_ACCESS_TOKEN")
-    sys.exit(1)
-
-def post_mastodon(text: str):
+def post_mastodon(status):
+    url = f"{MASTODON_BASE_URL}/api/v1/statuses"
     r = requests.post(
-        f"{BASE}/api/v1/statuses",
-        headers={"Authorization": f"Bearer {TOKEN}"},
-        data={"status": text, "visibility": "public"},
-        timeout=25,
+        url,
+        headers={"Authorization": f"Bearer {MASTODON_ACCESS_TOKEN}"},
+        data={"status": status},
     )
-    print("Mastodon:", r.status_code, r.text[:200])
     r.raise_for_status()
 
-# ===== すぐ投稿（URLあり）=====
-post_mastodon(
-    "Found a useful article today.\n"
-    "Quick share (testing my pipeline).\n"
-    f"{article_url}"
-)
+def generate_fun_post():
+    prompt = (
+        "Write a short, casual, slightly funny English post about daily life. "
+        "No links. 1–2 sentences. Friendly tone."
+    )
 
-# ===== 15分待つ =====
-time.sleep(15 * 60)
-
-# ===== 15分後投稿（URLなし・DeepSeek）=====
-api_key = os.getenv("DEEPSEEK_API_KEY", "").strip()
-
-if api_key:
     r = requests.post(
         "https://api.deepseek.com/v1/chat/completions",
         headers={
-            "Authorization": f"Bearer {api_key}",
+            "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
             "Content-Type": "application/json",
         },
         json={
             "model": "deepseek-chat",
-            "messages": [
-                {
-                    "role": "system",
-                    "content": "Write a casual, human, slightly funny Mastodon post in English. No links. No hashtags."
-                },
-                {
-                    "role": "user",
-                    "content": "Daily life + a small joke. One short post under 250 characters."
-                }
-            ],
-            "max_tokens": 120,
-            "temperature": 0.9,
+            "messages": [{"role": "user", "content": prompt}],
         },
-        timeout=40,
     )
-    print("DeepSeek:", r.status_code, r.text[:200])
     r.raise_for_status()
-    text2 = r.json()["choices"][0]["message"]["content"].strip()
-else:
-    text2 = "I opened my laptop to work… and somehow spent 10 minutes reorganizing tabs. Productivity is a mysterious creature."
+    return r.json()["choices"][0]["message"]["content"]
 
-post_mastodon(text2)
+def main():
+    print("Fetching latest Issue comment...")
+    body = get_latest_comment()
+
+    article_url = extract_article_url(body)
+    if not article_url:
+        print("No valid New article URL found. Exit.")
+        return
+
+    print("Posting article URL to Mastodon...")
+    post_mastodon(article_url)
+
+    print("Waiting 15 minutes...")
+    time.sleep(900)
+
+    print("Generating second post...")
+    fun_post = generate_fun_post()
+
+    print("Posting second Mastodon post...")
+    post_mastodon(fun_post)
+
+    print("Done.")
+
+if __name__ == "__main__":
+    main()
