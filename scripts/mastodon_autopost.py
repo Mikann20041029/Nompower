@@ -32,9 +32,12 @@ if not deepseek_key:
     fail("Missing secret: DEEPSEEK_API_KEY")
 
 # 起動条件
-if "Run status: success" not in issue_body:
-    log("Skip: 'Run status: success' not found.")
+import re
+
+if not re.search(r"Run status:\s*\*?success\*?", issue_body, re.IGNORECASE):
+    log("Skip: Run status success not found (markdown-tolerant).")
     sys.exit(0)
+
 
 if "New article:" not in issue_body:
     log("Skip: 'New article:' not found.")
