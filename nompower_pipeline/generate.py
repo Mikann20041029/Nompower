@@ -19,7 +19,7 @@ from .util import (
     sanitize_llm_html,
 )
 from .deepseek import DeepSeekClient
-from .reddit import fetch_rss_entries, fetch_post_json
+from .reddit import fetch_rss_entries
 from .render import env_for, render_to_file, write_asset
 
 CONFIG_PATH = ROOT / "nompower_pipeline" / "config.json"
@@ -42,10 +42,10 @@ var infolinks_wsid = 0;
 FIXED_POLICY_BLOCK = """
 <p><strong>Policy & Transparency (to stay search-friendly)</strong></p>
 <ul>
-  <li><strong>Source & attribution:</strong> Each post is based on a public Reddit RSS item. We always link to the original Reddit permalink and do not claim ownership of third-party content.</li>
+  <li><strong>Source & attribution:</strong> Each post is based on a public Reddit RSS item. We always link to the original Reddit post and do not claim ownership of third-party content.</li>
   <li><strong>Original value:</strong> We add commentary, context, and takeaways. If something is uncertain, we label it as speculation rather than stating it as fact.</li>
   <li><strong>No manipulation:</strong> No cloaking, hidden text, doorway pages, or misleading metadata. Titles and summaries reflect the on-page content.</li>
-  <li><strong>Safety filters:</strong> We skip NSFW/over-18 content and block obvious adult/self-harm/gore keywords.</li>
+  <li><strong>Safety filters:</strong> We skip obvious adult/self-harm/gore keywords and avoid NSFW feeds.</li>
   <li><strong>Ads:</strong> Third-party scripts may show ads we do not directly control. If you see problematic ads, contact us and we will adjust providers/placement.</li>
   <li><strong>Removal requests:</strong> If you believe content should be removed (copyright, personal data, etc.), email us with the URL and justification.</li>
 </ul>
@@ -80,11 +80,8 @@ def append_processed(url: str) -> None:
     write_text(PROCESSED_PATH, current)
 
 
-def is_blocked(title: str, subreddit: str, blocked_subs: list[str], blocked_kw: list[str]) -> bool:
+def is_blocked(title: str, blocked_kw: list[str]) -> bool:
     t = (title or "").lower()
-    subs = set([x.lower() for x in blocked_subs])
-    if (subreddit or "").lower() in subs:
-        return True
     for kw in blocked_kw:
         if kw.lower() in t:
             return True
@@ -92,7 +89,6 @@ def is_blocked(title: str, subreddit: str, blocked_subs: list[str], blocked_kw: 
 
 
 def pick_candidate(cfg: dict, processed: set[str], articles: list[dict]) -> dict | None:
-    blocked_subs = cfg["safety"]["blocked_subreddits"]
     blocked_kw = cfg["safety"]["blocked_keywords"]
 
     prev_titles = [a.get("title", "") for a in articles]
@@ -105,36 +101,21 @@ def pick_candidate(cfg: dict, processed: set[str], articles: list[dict]) -> dict
             if not link or link in processed:
                 continue
 
-            # Reddit JSON for over_18 / subreddit / score / comments / image_url
-            post = fetch_post_json(link)
-            subreddit = (post.get("subreddit", "") if post else "") or ""
-            over18 = bool(post.get("over_18", False)) if post else False
-            if over18:
+            if is_blocked(e["title"], blocked_kw):
                 continue
 
-            if is_blocked(e["title"], subreddit, blocked_subs, blocked_kw):
-                continue
-
-            # Avoid near-duplicate topics by title similarity
             tok = simple_tokens(e["title"])
             too_similar = any(jaccard(tok, pt) >= 0.78 for pt in prev_tok)
             if too_similar:
                 continue
 
-            score = int(post.get("score", 0)) if post else 0
-            comments = int(post.get("num_comments", 0)) if post else 0
+            # ✅ RSSから拾った安全な画像だけ使う（i.redd.itのみ）
+            e["image_url"] = e.get("hero_image", "") or ""
+            e["image_kind"] = e.get("hero_image_kind", "none") or "none"
 
-            # ✅ image_url / kind (safe: reddit-hosted only)
-            e["image_url"] = (post.get("image_url", "") if post else "") or ""
-            e["image_kind"] = (post.get("image_kind", "none") if post else "none") or "none"
-
-            e["subreddit"] = subreddit
-            e["score"] = score
-            e["comments"] = comments
+            # スコア/コメントが取れないので、RSS単体は順序を保つ（先頭がトレンドの想定）
             candidates.append(e)
 
-    # Prefer momentum: score + 2*comments
-    candidates.sort(key=lambda x: (x.get("score", 0) + x.get("comments", 0) * 2), reverse=True)
     return candidates[0] if candidates else None
 
 
@@ -147,9 +128,6 @@ def deepseek_article(cfg: dict, item: dict) -> str:
     title = item["title"]
     link = item["link"]
     summary = item.get("summary", "")
-    subreddit = item.get("subreddit", "")
-    score = item.get("score", 0)
-    comments = item.get("comments", 0)
 
     system = (
         "You are an editorial writer for a tech/news digest site. "
@@ -163,10 +141,8 @@ def deepseek_article(cfg: dict, item: dict) -> str:
 Write an original article (HTML body only; use <p>, <h2>, <ul><li>) based on this Reddit post.
 
 Post title: {title}
-Subreddit: r/{subreddit}
 Permalink: {link}
 RSS summary snippet (may be partial): {summary}
-Signals: score={score}, comments={comments}
 
 Requirements:
 - Target length: ~{target_words} words (roughly).
@@ -194,10 +170,8 @@ Requirements:
 
 
 def compute_rankings(articles: list[dict]) -> list[dict]:
-    def rank_key(a: dict):
-        return (int(a.get("score", 0)) + 2 * int(a.get("comments", 0)), a.get("published_ts", ""))
-
-    return sorted(articles, key=rank_key, reverse=True)
+    # RSS-only mode: use recency as ranking
+    return sorted(articles, key=lambda a: a.get("published_ts", ""), reverse=True)
 
 
 def related_articles(current: dict, articles: list[dict], k: int = 6) -> list[dict]:
@@ -207,8 +181,6 @@ def related_articles(current: dict, articles: list[dict], k: int = 6) -> list[di
         if a.get("id") == current.get("id"):
             continue
         sim = jaccard(cur_tok, simple_tokens(a.get("title", "")))
-        if a.get("subreddit") and a.get("subreddit") == current.get("subreddit"):
-            sim += 0.08
         scored.append((sim, a))
     scored.sort(key=lambda x: x[0], reverse=True)
     return [a for s, a in scored[:k] if s > 0.05]
@@ -219,11 +191,9 @@ def build_site(cfg: dict, articles: list[dict]) -> None:
     (SITE_DIR / "articles").mkdir(parents=True, exist_ok=True)
     (SITE_DIR / "assets").mkdir(parents=True, exist_ok=True)
 
-    # static assets
     write_asset(SITE_DIR / "assets" / "style.css", STATIC_DIR / "style.css")
     write_asset(SITE_DIR / "assets" / "fx.js", STATIC_DIR / "fx.js")
 
-    # robots + sitemap
     base_url = cfg["site"]["base_url"].rstrip("/")
     robots = f"""User-agent: *
 Allow: /
@@ -246,7 +216,6 @@ Sitemap: {base_url}/sitemap.xml
     ranking = compute_rankings(articles)[:10]
     new_articles = sorted(articles, key=lambda a: a.get("published_ts", ""), reverse=True)[:10]
 
-    # index
     render_to_file(
         jenv,
         "index.html",
@@ -262,28 +231,11 @@ Sitemap: {base_url}/sitemap.xml
         SITE_DIR / "index.html",
     )
 
-    # static pages
     static_pages = [
-        (
-            "about",
-            "About Nompower",
-            "<p>Nompower is a daily digest that curates a single noteworthy Reddit item and adds commentary, context, and takeaways.</p>",
-        ),
-        (
-            "privacy",
-            "Privacy",
-            "<p>We do not require accounts. Third-party ad scripts may set cookies or collect device identifiers. See each provider’s policy. If you want removal or have concerns, contact us.</p>",
-        ),
-        (
-            "terms",
-            "Terms",
-            "<p>Use at your own risk. Content is informational and may be incomplete. We link to sources and welcome corrections.</p>",
-        ),
-        (
-            "disclaimer",
-            "Disclaimer",
-            "<p>This site is not affiliated with Reddit. Trademarks belong to their owners. We do not guarantee accuracy, availability, or outcomes.</p>",
-        ),
+        ("about", "About Nompower", "<p>Nompower is a daily digest that curates a single noteworthy Reddit item and adds commentary, context, and takeaways.</p>"),
+        ("privacy", "Privacy", "<p>We do not require accounts. Third-party ad scripts may set cookies or collect device identifiers. See each provider’s policy. If you want removal or have concerns, contact us.</p>"),
+        ("terms", "Terms", "<p>Use at your own risk. Content is informational and may be incomplete. We link to sources and welcome corrections.</p>"),
+        ("disclaimer", "Disclaimer", "<p>This site is not affiliated with Reddit. Trademarks belong to their owners. We do not guarantee accuracy, availability, or outcomes.</p>"),
         ("contact", "Contact", f"<p>Email: <a href='mailto:{cfg['site']['contact_email']}'>{cfg['site']['contact_email']}</a></p>"),
     ]
 
@@ -303,7 +255,6 @@ Sitemap: {base_url}/sitemap.xml
             SITE_DIR / f"{slug}.html",
         )
 
-    # articles
     for a in articles:
         rel = related_articles(a, articles, k=6)
         render_to_file(
@@ -371,13 +322,10 @@ def main() -> None:
         "path": path,
         "published_ts": ts.isoformat(timespec="seconds"),
         "source_url": cand["link"],
-        "subreddit": cand.get("subreddit", ""),
-        "score": int(cand.get("score", 0)),
-        "comments": int(cand.get("comments", 0)),
         "rss": cand.get("rss", ""),
         "summary": cand.get("summary", ""),
         "body_html": body_html,
-        # ✅ article page hero image (safe: reddit-hosted only)
+        # ✅ RSSから拾った安全画像（i.redd.itのみ）。無ければ空で表示されない
         "hero_image": cand.get("image_url", "") or "",
         "hero_image_kind": cand.get("image_kind", "none") or "none",
     }
@@ -396,9 +344,6 @@ def main() -> None:
             "article_path": path,
             "article_title": cand["title"],
             "source_url": cand["link"],
-            "subreddit": cand.get("subreddit", ""),
-            "score": int(cand.get("score", 0)),
-            "comments": int(cand.get("comments", 0)),
         },
     )
 
