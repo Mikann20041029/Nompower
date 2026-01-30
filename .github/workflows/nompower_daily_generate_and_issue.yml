@@ -1,0 +1,110 @@
+name: Nompower Daily Generate + Issue (PAT)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */8 * * *"
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: nompower-daily
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # ここもPATを使う（issues作成だけ直しても、checkoutで詰まる人がいるので統一）
+          token: ${{ secrets.GH_PAT != '' && secrets.GH_PAT || github.token }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            pip install requests
+          fi
+
+      # ここはあなたのサイト生成処理に置き換え
+      # 例: python nompower_pipeline/generate.py
+      - name: Generate site (example)
+        run: |
+          set -euo pipefail
+          echo "[LOG] start generate"
+          python nompower_pipeline/generate.py
+          echo "[LOG] done generate"
+
+      # Issue本文を作る（あなたの生成結果から New article を埋める想定）
+      # ここでは例として「最新の articles/*.html を拾う」実装にしてある
+      - name: Build Issue body (pick latest New article)
+        run: |
+          set -euo pipefail
+
+          # Homepage はあなたの環境に合わせて固定でOK
+          HOMEPAGE="https://nompower.mikanntool.com/"
+
+          # New article は「生成物から最新を拾う」(必要ならここをあなたの実データに合わせて改造)
+          # 例: out/urls.txt や issues_payload.json があるならそこから取るのが一番堅い
+          LATEST_ARTICLE="$(ls -1t articles/*.html 2>/dev/null | head -n 1 || true)"
+
+          if [ -z "$LATEST_ARTICLE" ]; then
+            echo "[ERROR] Could not find articles/*.html . You must adjust this step to your real output." >&2
+            exit 1
+          fi
+
+          NEW_URL="${HOMEPAGE%/}/${LATEST_ARTICLE}"
+
+          TS="$(date -u +%F_%H-%M-%S)_UTC"
+          TITLE="Nompower Daily URLs - ${TS}"
+
+          {
+            echo "Run status: success"
+            echo "Homepage: ${HOMEPAGE}"
+            echo ""
+            echo "New article: ${NEW_URL}"
+            echo ""
+            echo "Timestamp: ${TS}"
+          } > issue_body.txt
+
+          echo "[LOG] Issue title: ${TITLE}"
+          echo "[LOG] Issue body preview:"
+          sed -n '1,120p' issue_body.txt
+
+          echo "ISSUE_TITLE=${TITLE}" >> $GITHUB_ENV
+
+      # ここが本命：Issue作成を PAT で行う（GITHUB_TOKEN禁止）
+      - name: Create NEW Issue using PAT
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "[ERROR] secrets.GH_PAT is empty. Set GH_PAT in repo secrets." >&2
+            exit 1
+          fi
+
+          # gh CLI は runner に入ってる
+          echo "[LOG] creating issue via PAT..."
+          gh issue create \
+            --title "${ISSUE_TITLE}" \
+            --body-file issue_body.txt
+
+          echo "[LOG] created issue OK"
