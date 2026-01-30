@@ -105,7 +105,7 @@ def pick_candidate(cfg: dict, processed: set[str], articles: list[dict]) -> dict
             if not link or link in processed:
                 continue
 
-            # Reddit JSON for over_18 / subreddit / score / comments
+            # Reddit JSON for over_18 / subreddit / score / comments / image_url
             post = fetch_post_json(link)
             subreddit = (post.get("subreddit", "") if post else "") or ""
             over18 = bool(post.get("over_18", False)) if post else False
@@ -123,6 +123,11 @@ def pick_candidate(cfg: dict, processed: set[str], articles: list[dict]) -> dict
 
             score = int(post.get("score", 0)) if post else 0
             comments = int(post.get("num_comments", 0)) if post else 0
+
+            # ✅ image_url / kind (safe: reddit-hosted only)
+            e["image_url"] = (post.get("image_url", "") if post else "") or ""
+            e["image_kind"] = (post.get("image_kind", "none") if post else "none") or "none"
+
             e["subreddit"] = subreddit
             e["score"] = score
             e["comments"] = comments
@@ -133,17 +138,13 @@ def pick_candidate(cfg: dict, processed: set[str], articles: list[dict]) -> dict
     return candidates[0] if candidates else None
 
 
-def deepseek_article(cfg: dict, item: dict) -> dict:
+def deepseek_article(cfg: dict, item: dict) -> str:
     ds = DeepSeekClient()
     model = cfg["generation"]["model"]
     target_words = int(cfg["generation"]["target_words"])
     temp = float(cfg["generation"]["temperature"])
 
-    # あとから自由に編集できるプロンプト（config.json）
-    title_style = cfg["generation"].get("title_prompt", "").strip()
-    body_style = cfg["generation"].get("body_prompt", "").strip().replace("{target_words}", str(target_words))
-
-    src_title = item["title"]
+    title = item["title"]
     link = item["link"]
     summary = item.get("summary", "")
     subreddit = item.get("subreddit", "")
@@ -153,59 +154,10 @@ def deepseek_article(cfg: dict, item: dict) -> dict:
     system = (
         "You are an editorial writer for a tech/news digest site. "
         "Write in English only. Do not fabricate facts. If uncertain, label it clearly as speculation. "
+        "Be energetic and slightly hyped, but keep it accurate and non-defamatory. "
         "Avoid copyrighted copying; paraphrase and add original commentary and takeaways. "
-        "No adult content, hate, or self-harm content. "
-        "Return STRICT JSON only."
+        "No adult content, hate, or self-harm content."
     )
-
-    user = f"""
-You will generate BOTH a new headline and an article body.
-Return STRICT JSON ONLY:
-
-{{
-  "title": "...",
-  "body_html": "..."
-}}
-
-SOURCE INPUT:
-- Original title: {src_title}
-- Subreddit: r/{subreddit}
-- Permalink: {link}
-- RSS summary snippet (may be partial): {summary}
-- Signals: score={score}, comments={comments}
-
-TITLE INSTRUCTIONS:
-{title_style}
-
-BODY INSTRUCTIONS:
-{body_style}
-
-Hard rules:
-- Output JSON only (no markdown, no extra text).
-- "body_html" must be valid HTML body using <p>, <h2>, <ul><li> only.
-""".strip()
-
-    out = ds.chat(
-        model=model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        temperature=temp,
-        max_tokens=2800,
-    )
-
-    # JSON parse + sanitize
-    try:
-        data = json.loads(out)
-        title = (data.get("title") or "").strip()
-        body_html = sanitize_llm_html(data.get("body_html") or "")
-        if not title:
-            title = src_title
-        return {"title": title, "body_html": body_html}
-    except Exception:
-        # 失敗時はRSSタイトルで継続（本文は返答をHTMLとして扱う）
-        return {"title": src_title, "body_html": sanitize_llm_html(out)}
 
     user = f"""
 Write an original article (HTML body only; use <p>, <h2>, <ul><li>) based on this Reddit post.
@@ -405,10 +357,7 @@ def main() -> None:
         )
         return
 
-    gen = deepseek_article(cfg, cand)
-    title = gen["title"]
-    body_html = gen["body_html"]
-
+    body_html = deepseek_article(cfg, cand)
 
     ts = datetime.now(timezone.utc)
     ymd = ts.strftime("%Y-%m-%d")
@@ -418,7 +367,7 @@ def main() -> None:
 
     entry = {
         "id": f"{ymd}-{slug}",
-        "title": title,
+        "title": cand["title"],
         "path": path,
         "published_ts": ts.isoformat(timespec="seconds"),
         "source_url": cand["link"],
@@ -428,6 +377,9 @@ def main() -> None:
         "rss": cand.get("rss", ""),
         "summary": cand.get("summary", ""),
         "body_html": body_html,
+        # ✅ article page hero image (safe: reddit-hosted only)
+        "hero_image": cand.get("image_url", "") or "",
+        "hero_image_kind": cand.get("image_kind", "none") or "none",
     }
 
     append_processed(cand["link"])
