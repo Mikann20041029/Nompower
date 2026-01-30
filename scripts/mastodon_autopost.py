@@ -34,9 +34,10 @@ if not deepseek_key:
 # 起動条件
 import re
 
-if not re.search(r"Run status:\s*\*?success\*?", issue_body, re.IGNORECASE):
+if not re.search(r"Run status:\s*(?:\*+)?success(?:\*+)?", issue_body, re.IGNORECASE):
     log("Skip: Run status success not found (markdown-tolerant).")
     sys.exit(0)
+
 
 
 if "New article:" not in issue_body:
