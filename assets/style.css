@@ -125,13 +125,59 @@ body{
   padding: 16px;
   margin: 14px 0;
 }
-/* Ranking card: gold border + subtle glow (only this section) */
+/* Ranking card: stronger gold glow (only this section) */
 #ranking.card{
-  border: 1px solid rgba(255, 215, 0, 0.55);         /* gold */
+  border: 1px solid rgba(255, 215, 0, 0.65); /* a bit stronger */
   box-shadow:
-    0 0 0 1px rgba(255, 215, 0, 0.18) inset,         /* inner rim */
-    0 0 22px rgba(255, 215, 0, 0.18),                /* glow */
-    var(--shadow);                                   /* keep existing shadow */
+    0 0 0 1px rgba(255, 215, 0, 0.22) inset, /* inner rim */
+    0 0 0 2px rgba(255, 215, 0, 0.10),        /* thin outer edge */
+    0 0 18px rgba(255, 215, 0, 0.22),         /* glow near */
+    0 0 42px rgba(255, 215, 0, 0.18),         /* glow mid */
+    0 0 90px rgba(255, 170, 0, 0.14),         /* warm bloom far */
+    var(--shadow);
+}
+
+/* Ranking numbers (1/2/3): gold / silver / bronze glow */
+#ranking .olist{
+  list-style-position: inside; /* make marker easier to see */
+  padding-left: 0;             /* optional: aligns nicely */
+}
+
+#ranking .olist > li::marker{
+  font-weight: 800;
+  font-size: 15px;
+}
+
+/* 1st: Gold */
+#ranking .olist > li:nth-child(1)::marker{
+  color: rgba(255, 215, 0, 0.95);
+  text-shadow:
+    0 0 6px rgba(255, 215, 0, 0.55),
+    0 0 16px rgba(255, 215, 0, 0.28),
+    0 0 34px rgba(255, 170, 0, 0.18);
+}
+
+/* 2nd: Silver */
+#ranking .olist > li:nth-child(2)::marker{
+  color: rgba(230, 235, 255, 0.95);
+  text-shadow:
+    0 0 6px rgba(230, 235, 255, 0.55),
+    0 0 16px rgba(200, 210, 255, 0.28),
+    0 0 34px rgba(180, 190, 255, 0.18);
+}
+
+/* 3rd: Bronze */
+#ranking .olist > li:nth-child(3)::marker{
+  color: rgba(205, 127, 50, 0.95);
+  text-shadow:
+    0 0 6px rgba(205, 127, 50, 0.55),
+    0 0 16px rgba(205, 127, 50, 0.28),
+    0 0 34px rgba(255, 140, 0, 0.16);
+}
+
+/* (optional) make top3 titles slightly match the prestige */
+#ranking .olist > li:nth-child(-n+3) a{
+  font-weight: 650;
 }
 
 
