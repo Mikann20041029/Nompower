@@ -1,8 +1,6 @@
-name: Mastodon from Issue #1 (any update)
+name: Mastodon from Issue #1 (comment trigger)
 
 on:
-  issues:
-    types: [opened, edited]
   issue_comment:
     types: [created, edited]
 
@@ -13,9 +11,11 @@ jobs:
   post:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
@@ -26,10 +26,8 @@ jobs:
 
       - name: Run worker
         env:
-          EVENT_NAME: ${{ github.event_name }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
-          ISSUE_BODY: ${{ github.event.issue.body }}
           COMMENT_BODY: ${{ github.event.comment.body }}
 
           MASTODON_BASE_URL: ${{ secrets.MASTODON_BASE_URL }}
