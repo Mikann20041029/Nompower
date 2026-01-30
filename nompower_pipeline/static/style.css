@@ -100,6 +100,51 @@ body{
 .btn:hover{border-color: rgba(255,255,255,.22)}
 
 .wrap{max-width: 980px; margin: 0 auto; padding: 20px 14px 70px}
+/* --- Side rails layout (desktop/tablet only) --- */
+.page-grid{
+  display:block;
+}
+
+/* default: rails OFF (mobile) */
+.ad-rail{ display:none; }
+
+/* iPad landscape / small desktop */
+@media (min-width: 1024px){
+  .page-grid{
+    display:grid;
+    grid-template-columns: 160px 1fr 160px;
+    gap: 16px;
+    align-items:start;
+  }
+  .page-main{ min-width: 0; }
+  .ad-rail{ display:block; }
+  .ad-rail-inner{
+    position: sticky;
+    top: 84px;            /* topbarの高さに合わせる */
+    min-height: 600px;    /* レールの存在感だけ確保 */
+  }
+}
+
+/* larger desktop: make rails bigger */
+@media (min-width: 1360px){
+  .page-grid{
+    grid-template-columns: 300px 1fr 300px; /* 300pxレール */
+    gap: 18px;
+  }
+  .ad-rail-inner{ min-height: 600px; }
+}
+
+/* rail look (subtle, not louder than content) */
+.ad-rail-inner{
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  backdrop-filter: blur(10px) saturate(120%);
+  box-shadow: var(--shadow);
+  padding: 10px;
+  overflow:hidden;
+}
 
 .hero{
   padding: 18px 0 10px;
