@@ -1,4 +1,4 @@
-# nompower_pipeline/generate.py
+　# nompower_pipeline/generate.py
 from __future__ import annotations
 
 from pathlib import Path
@@ -258,7 +258,7 @@ def write_rss_feed(cfg: dict, articles: list[dict], limit: int = 10) -> None:
 
     parts = []
     parts.append('<?xml version="1.0" encoding="UTF-8"?>')
-    parts.append('<rss version="2.0">')
+    parts.append("<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'>")
     parts.append("<channel>")
     parts.append(f"<title>{_html.escape(site_title)}</title>")
     parts.append(f"<link>{_html.escape(base_url + '/')}</link>")
@@ -286,7 +286,7 @@ def write_rss_feed(cfg: dict, articles: list[dict], limit: int = 10) -> None:
     parts.append("</rss>")
 
     (SITE_DIR / "feed.xml").write_text("\n".join(parts) + "\n", encoding="utf-8")
-    write_rss_feed(cfg, articles, limit=10)
+   
 
 def build_site(cfg: dict, articles: list[dict]) -> None:
     SITE_DIR.mkdir(parents=True, exist_ok=True)
@@ -317,6 +317,8 @@ Sitemap: {base_url}/sitemap.xml
 
     ranking = compute_rankings(articles)[:10]
     new_articles = sorted(articles, key=lambda a: a.get("published_ts", ""), reverse=True)[:10]
+    
+    write_rss_feed(cfg, articles, limit=10)
 
     render_to_file(
         jenv,
