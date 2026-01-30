@@ -112,13 +112,14 @@ body{
 .sub{margin:0; color: var(--muted); max-width: 70ch; line-height:1.6}
 
 .card{
-  background: linear-gradient(180deg, rgba(18,22,40,.68), rgba(10,14,28,.76));
-  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,0.05);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  backdrop-filter: blur(10px) saturate(120%);
+  border: 1px solid rgba(255,255,255,0.16);
   border-radius: 18px;
   box-shadow: var(--shadow);
-  padding: 16px;
-  margin: 14px 0;
-}
+  padding: 16
+
 
 .card-h{
   display:flex; align-items:baseline; justify-content:space-between;
