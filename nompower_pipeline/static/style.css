@@ -6,6 +6,9 @@
   --muted:rgba(255,255,255,.68);
   --line:rgba(255,255,255,.10);
   --shadow: 0 16px 60px rgba(0,0,0,.45);
+  --blob1: rgba(0,209,255,.12);
+  --blob2: rgba(177,0,255,.12);
+  --blob3: rgba(0,255,122,.10);
 
   /* fx.js が毎回ランダムに上書き */
   --neon1:#00d1ff;
@@ -18,10 +21,11 @@ html,body{height:100%}
 body{
   margin:0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  background: radial-gradient(1200px 800px at 20% 10%, rgba(0,209,255,.12), transparent 55%),
-              radial-gradient(1000px 700px at 80% 20%, rgba(177,0,255,.12), transparent 60%),
-              radial-gradient(1000px 800px at 60% 90%, rgba(0,255,122,.10), transparent 60%),
-              var(--bg);
+  background: radial-gradient(1200px 800px at 20% 10%, var(--blob1), transparent 55%),
+            radial-gradient(1000px 700px at 80% 20%, var(--blob2), transparent 60%),
+            radial-gradient(1000px 800px at 60% 90%, var(--blob3), transparent 60%),
+            var(--bg);
+
   color: var(--text);
   overflow-x:hidden;
 }
