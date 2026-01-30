@@ -111,8 +111,7 @@ j1 = r1.json()
 log(f"Posted toot link: {j1.get('url')}")
 
 # ---- 追加要件：15分後にリンク無しの“生活感＋ネタ全ぶり”投稿 ----
-log("Sleeping 15 minutes...")
-time.sleep(15 * 60)
+
 
 prompt2 = (
     "Write a short, funny, very human English Mastodon post.\n"
