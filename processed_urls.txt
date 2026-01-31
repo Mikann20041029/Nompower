@@ -53,3 +53,4 @@ https://www.reddit.com/r/technology/comments/1qrrrvp/instagram_might_soon_let_yo
 https://www.reddit.com/r/technology/comments/1qrvrs8/microsoft_to_disable_ntlm_by_default_in_future
 https://www.reddit.com/r/technology/comments/1qrvqfu/google_disrupts_ipidea_residential_proxy_networks
 https://www.reddit.com/r/technology/comments/1qrwu7i/nextgeneration_ai_swarms_will_invade_social_media
+https://www.reddit.com/r/technology/comments/1qrxstk/quantizationaware_distillation_for_nvfp4
