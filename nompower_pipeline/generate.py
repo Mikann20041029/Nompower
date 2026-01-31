@@ -38,11 +38,11 @@ ADS_TOP = """<script src="https://pl28593834.effectivegatecpm.com/bf/0c/41/bf0c4
 ADS_MID = """<script src="https://quge5.com/88/tag.min.js" data-zone="206389" async data-cfasync="false"></script>"""
 ADS_BOTTOM = """<script type="text/javascript"></script>"""  # keep simple; replace with your actual bottom ad if needed
 
-ads_rail_left = """
+ADS_RAIL_LEFT = """
 <script src="https://pl28593834.effectivegatecpm.com/bf/0c/41/bf0c417e61a02af02bb4fab871651c1b.js"></script>
 """.strip()
 
-ads_rail_right = """
+ADS_RAIL_RIGHT = """
 <script src="https://quge5.com/88/tag.min.js" data-zone="206389" async data-cfasync="false"></script>
 """.strip()
 
@@ -183,20 +183,9 @@ Requirements:
 
 
 def strip_leading_duplicate_title(body_html: str, title: str) -> str:
-    """
-    Remove duplicated title that LLM sometimes outputs at the beginning of body_html.
-    We keep the template H1 (a.title) as the single source of truth.
-
-    Removes if the first:
-    - <h1> equals title
-    - <h2> equals title
-    - <p> equals title
-    - plain text line equals title (rare)
-    """
     if not body_html or not title:
         return body_html
 
-    # Normalize title for comparison
     t = _html.unescape(title).strip()
     t_norm = re.sub(r"\s+", " ", t).lower()
 
@@ -207,24 +196,20 @@ def strip_leading_duplicate_title(body_html: str, title: str) -> str:
 
     s = body_html.lstrip()
 
-    # 1) remove leading <h1>...</h1> if it matches title
     m = re.match(r"(?is)^\s*<h1[^>]*>(.*?)</h1>\s*", s)
     if m and _same(m.group(1)):
         return s[m.end() :].lstrip()
 
-    # 2) remove leading <h2>...</h2> if it matches title
     m = re.match(r"(?is)^\s*<h2[^>]*>(.*?)</h2>\s*", s)
     if m and _same(m.group(1)):
         return s[m.end() :].lstrip()
 
-    # 3) remove leading <p>...</p> if it matches title
     m = re.match(r"(?is)^\s*<p[^>]*>(.*?)</p>\s*", s)
     if m:
         inner = re.sub(r"(?is)<[^>]+>", "", m.group(1))
         if _same(inner):
             return s[m.end() :].lstrip()
 
-    # 4) remove leading plain-text title line (defensive)
     m = re.match(r"(?is)^\s*([^<\n]{10,200})\s*(?:<br\s*/?>|\n)\s*", s)
     if m and _same(m.group(1)):
         return s[m.end() :].lstrip()
@@ -233,7 +218,6 @@ def strip_leading_duplicate_title(body_html: str, title: str) -> str:
 
 
 def compute_rankings(articles: list[dict]) -> list[dict]:
-    # RSS-only mode: use recency as ranking
     return sorted(articles, key=lambda a: a.get("published_ts", ""), reverse=True)
 
 
@@ -260,7 +244,7 @@ def write_rss_feed(cfg: dict, articles: list[dict], limit: int = 10) -> None:
         dt = datetime.fromisoformat(iso.replace("Z", "+00:00"))
         return dt.astimezone(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
 
-    parts = []
+    parts: list[str] = []
     parts.append('<?xml version="1.0" encoding="UTF-8"?>')
     parts.append("<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'>")
     parts.append("<channel>")
@@ -292,17 +276,21 @@ def write_rss_feed(cfg: dict, articles: list[dict], limit: int = 10) -> None:
 
 
 def build_site(cfg: dict, articles: list[dict]) -> None:
+    base_url = cfg["site"]["base_url"].rstrip("/")
+
     SITE_DIR.mkdir(parents=True, exist_ok=True)
     (SITE_DIR / "articles").mkdir(parents=True, exist_ok=True)
     (SITE_DIR / "assets").mkdir(parents=True, exist_ok=True)
-    (SITE_DIR / "og").mkdir(parents=True, exist_ok=True)
-    write_asset(SITE_DIR / "og" / "default.jpg", STATIC_DIR / "og" / "default.jpg")
+    (SITE_DIR / "assets" / "og").mkdir(parents=True, exist_ok=True)
 
+    # static assets
     write_asset(SITE_DIR / "assets" / "style.css", STATIC_DIR / "style.css")
     write_asset(SITE_DIR / "assets" / "fx.js", STATIC_DIR / "fx.js")
+
+    # default OG image: /assets/og/default.jpg
+    write_asset(SITE_DIR / "assets" / "og" / "default.jpg", STATIC_DIR / "og" / "default.jpg")
     default_og = f"{base_url}/assets/og/default.jpg"
 
-    base_url = cfg["site"]["base_url"].rstrip("/")
     robots = f"""User-agent: *
 Allow: /
 
@@ -326,6 +314,9 @@ Sitemap: {base_url}/sitemap.xml
 
     write_rss_feed(cfg, articles, limit=10)
 
+    site_title = cfg["site"].get("title", "Nompower")
+    site_desc = cfg["site"].get("description", "Daily digest")
+
     base_ctx = {
         "site": cfg["site"],
         "ranking": ranking,
@@ -333,19 +324,26 @@ Sitemap: {base_url}/sitemap.xml
         "ads_top": ADS_TOP,
         "ads_mid": ADS_MID,
         "ads_bottom": ADS_BOTTOM,
-        "ads_rail_left": ads_rail_left,
-        "ads_rail_right": ads_rail_right,
+        "ads_rail_left": ADS_RAIL_LEFT,
+        "ads_rail_right": ADS_RAIL_RIGHT,
         "now_iso": now_utc_iso(),
     }
 
+    # index
+    ctx = dict(base_ctx)
+    ctx.update(
+        {
+            "title": site_title,
+            "description": site_desc,
+            "canonical": base_url + "/",
+            "og_image": default_og,
+        }
+    )
     render_to_file(
         jenv,
         "index.html",
-        base_ctx,
+        ctx,
         SITE_DIR / "index.html",
-        "canonical": base_url + "/",
-        "og_image": default_og,
-
     )
 
     static_pages = [
@@ -356,9 +354,18 @@ Sitemap: {base_url}/sitemap.xml
         ("contact", "Contact", f"<p>Email: <a href='mailto:{cfg['site']['contact_email']}'>{cfg['site']['contact_email']}</a></p>"),
     ]
 
-    for slug, title, body in static_pages:
+    for slug, page_title, body in static_pages:
         ctx = dict(base_ctx)
-        ctx.update({"page_title": title, "page_body": body})
+        ctx.update(
+            {
+                "page_title": page_title,
+                "page_body": body,
+                "title": f"{page_title} | {site_title}",
+                "description": site_desc,
+                "canonical": f"{base_url}/{slug}.html",
+                "og_image": default_og,
+            }
+        )
         render_to_file(
             jenv,
             "static.html",
@@ -368,12 +375,29 @@ Sitemap: {base_url}/sitemap.xml
 
     for a in articles:
         rel = related_articles(a, articles, k=6)
+
+        # description for OG
+        desc = (a.get("summary", "") or "").strip()
+        if not desc:
+            # very small fallback, strip tags from body_html
+            desc = re.sub(r"\s+", " ", re.sub(r"(?is)<[^>]+>", " ", a.get("body_html", ""))).strip()[:200]
+        if not desc:
+            desc = site_desc
+
+        og_img = a.get("hero_image", "") or default_og
+
         ctx = dict(base_ctx)
         ctx.update(
             {
                 "a": a,
                 "related": rel,
+                "ranking": ranking,
+                "new_articles": new_articles,
                 "policy_block": FIXED_POLICY_BLOCK.format(contact_email=cfg["site"]["contact_email"]),
+                "title": a.get("title", site_title),
+                "description": desc,
+                "canonical": f"{base_url}{a['path']}",
+                "og_image": og_img,
             }
         )
         render_to_file(
