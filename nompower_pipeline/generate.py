@@ -88,6 +88,19 @@ def append_processed(url: str) -> None:
     current += url + "\n"
     write_text(PROCESSED_PATH, current)
 
+def og_image_from_article(base_url: str, a: dict) -> str:
+    img = (a.get("hero_image") or "").strip()
+    if not img:
+        return ""
+
+    if img.startswith("//"):
+        return "https:" + img
+    if img.startswith("/"):
+        return base_url.rstrip("/") + img
+    if img.startswith("http://") or img.startswith("https://"):
+        return img
+
+    return ""
 
 def is_blocked(title: str, blocked_kw: list[str]) -> bool:
     t = (title or "").lower()
