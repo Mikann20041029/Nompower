@@ -287,6 +287,52 @@ def _abs_image_url(base_url: str, img: str) -> str:
         return base_url.rstrip("/") + s
     return base_url.rstrip("/") + "/" + s
 
+def _guess_ext_from_url(u: str) -> str:
+    try:
+        path = urlparse(u).path.lower()
+    except Exception:
+        path = ""
+    for ext in (".jpg", ".jpeg", ".png", ".webp"):
+        if path.endswith(ext):
+            return ext
+    return ".jpg"
+
+
+def cache_og_image(base_url: str, src_url: str, article_id: str) -> str:
+    """
+    RSSに画像がある記事だけ:
+    - 外部画像を site/og/ に保存
+    - og:image は自ドメインの絶対URLで返す
+    画像が無い/失敗 → "" を返す（= og:image を出さない）
+    """
+    src_url = (src_url or "").strip()
+    if not src_url:
+        return ""
+
+    # i.redd.it など外部からの直リンクがSNSクローラに弾かれる対策として自サイトにキャッシュ
+    ext = _guess_ext_from_url(src_url)
+    rel = f"/og/{article_id}{ext}"
+    out_path = SITE_DIR / rel.lstrip("/")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if not out_path.exists():
+        try:
+            req = urllib.request.Request(
+                src_url,
+                headers={
+                    # ここ重要：UA無いと弾くCDNがある
+                    "User-Agent": "Mozilla/5.0 (compatible; NompowerBot/1.0; +https://nompower.mikanntool.com/)"
+                },
+            )
+            with urllib.request.urlopen(req, timeout=20) as r:
+                data = r.read()
+            if data:
+                out_path.write_bytes(data)
+        except Exception:
+            return ""
+
+    # 自サイトの絶対URLを返す（SNSはこれを取りに来る）
+    return base_url.rstrip("/") + rel
 
 def build_site(cfg: dict, articles: list[dict]) -> None:
     base_url = cfg["site"]["base_url"].rstrip("/")
