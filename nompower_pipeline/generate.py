@@ -1,9 +1,9 @@
 # nompower_pipeline/generate.py
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-from datetime import datetime, timezone
 from slugify import slugify
 import json
 import re
@@ -36,13 +36,13 @@ STATIC_DIR = ROOT / "nompower_pipeline" / "static"
 # === Ads (strings must be standalone and syntactically valid) ===
 ADS_TOP = """<script src="https://pl28593834.effectivegatecpm.com/bf/0c/41/bf0c417e61a02af02bb4fab871651c1b.js"></script>"""
 ADS_MID = """<script src="https://quge5.com/88/tag.min.js" data-zone="206389" async data-cfasync="false"></script>"""
-ADS_BOTTOM = """<script type="text/javascript"></script>"""  # keep simple; replace with your actual bottom ad if needed
+ADS_BOTTOM = """<script type="text/javascript"></script>"""  # keep simple; replace if needed
 
-ADS_RAIL_LEFT = """
+ads_rail_left = """
 <script src="https://pl28593834.effectivegatecpm.com/bf/0c/41/bf0c417e61a02af02bb4fab871651c1b.js"></script>
 """.strip()
 
-ADS_RAIL_RIGHT = """
+ads_rail_right = """
 <script src="https://quge5.com/88/tag.min.js" data-zone="206389" async data-cfasync="false"></script>
 """.strip()
 
@@ -120,7 +120,6 @@ def pick_candidate(cfg: dict, processed: set[str], articles: list[dict]) -> dict
             e["image_url"] = e.get("hero_image", "") or ""
             e["image_kind"] = e.get("hero_image_kind", "none") or "none"
 
-            # スコア/コメントが取れないので、RSS単体は順序を保つ（先頭がトレンドの想定）
             candidates.append(e)
 
     return candidates[0] if candidates else None
@@ -244,7 +243,7 @@ def write_rss_feed(cfg: dict, articles: list[dict], limit: int = 10) -> None:
         dt = datetime.fromisoformat(iso.replace("Z", "+00:00"))
         return dt.astimezone(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
 
-    parts: list[str] = []
+    parts = []
     parts.append('<?xml version="1.0" encoding="UTF-8"?>')
     parts.append("<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'>")
     parts.append("<channel>")
@@ -275,21 +274,27 @@ def write_rss_feed(cfg: dict, articles: list[dict], limit: int = 10) -> None:
     (SITE_DIR / "feed.xml").write_text("\n".join(parts) + "\n", encoding="utf-8")
 
 
+def _abs_image_url(base_url: str, img: str) -> str:
+    """og:image は絶対URLが安定。i.redd.it 等が来る想定。"""
+    if not img:
+        return ""
+    s = img.strip()
+    if s.startswith("http://") or s.startswith("https://"):
+        return s
+    if s.startswith("/"):
+        return base_url.rstrip("/") + s
+    return base_url.rstrip("/") + "/" + s
+
+
 def build_site(cfg: dict, articles: list[dict]) -> None:
     base_url = cfg["site"]["base_url"].rstrip("/")
 
     SITE_DIR.mkdir(parents=True, exist_ok=True)
     (SITE_DIR / "articles").mkdir(parents=True, exist_ok=True)
     (SITE_DIR / "assets").mkdir(parents=True, exist_ok=True)
-    (SITE_DIR / "assets" / "og").mkdir(parents=True, exist_ok=True)
 
-    # static assets
     write_asset(SITE_DIR / "assets" / "style.css", STATIC_DIR / "style.css")
     write_asset(SITE_DIR / "assets" / "fx.js", STATIC_DIR / "fx.js")
-
-    # default OG image: /assets/og/default.jpg
-    write_asset(SITE_DIR / "assets" / "og" / "default.jpg", STATIC_DIR / "og" / "default.jpg")
-    default_og = f"{base_url}/assets/og/default.jpg"
 
     robots = f"""User-agent: *
 Allow: /
@@ -314,9 +319,6 @@ Sitemap: {base_url}/sitemap.xml
 
     write_rss_feed(cfg, articles, limit=10)
 
-    site_title = cfg["site"].get("title", "Nompower")
-    site_desc = cfg["site"].get("description", "Daily digest")
-
     base_ctx = {
         "site": cfg["site"],
         "ranking": ranking,
@@ -324,27 +326,23 @@ Sitemap: {base_url}/sitemap.xml
         "ads_top": ADS_TOP,
         "ads_mid": ADS_MID,
         "ads_bottom": ADS_BOTTOM,
-        "ads_rail_left": ADS_RAIL_LEFT,
-        "ads_rail_right": ADS_RAIL_RIGHT,
+        "ads_rail_left": ads_rail_left,
+        "ads_rail_right": ads_rail_right,
         "now_iso": now_utc_iso(),
     }
 
-    # index
+    # index.html（画像メタは出さない：デフォルト画像も出さない）
     ctx = dict(base_ctx)
     ctx.update(
         {
-            "title": site_title,
-            "description": site_desc,
+            "title": cfg["site"].get("title", "Nompower"),
+            "description": cfg["site"].get("description", "Daily digest"),
             "canonical": base_url + "/",
-            "og_image": default_og,
+            "og_type": "website",
+            "og_image": "",  # ←空なら base.html 側で出さない
         }
     )
-    render_to_file(
-        jenv,
-        "index.html",
-        ctx,
-        SITE_DIR / "index.html",
-    )
+    render_to_file(jenv, "index.html", ctx, SITE_DIR / "index.html")
 
     static_pages = [
         ("about", "About Nompower", "<p>Nompower is a daily digest that curates a single noteworthy Reddit item and adds commentary, context, and takeaways.</p>"),
@@ -360,31 +358,20 @@ Sitemap: {base_url}/sitemap.xml
             {
                 "page_title": page_title,
                 "page_body": body,
-                "title": f"{page_title} | {site_title}",
-                "description": site_desc,
+                "title": page_title,
+                "description": cfg["site"].get("description", "Daily digest"),
                 "canonical": f"{base_url}/{slug}.html",
-                "og_image": default_og,
+                "og_type": "website",
+                "og_image": "",  # デフォルト無し
             }
         )
-        render_to_file(
-            jenv,
-            "static.html",
-            ctx,
-            SITE_DIR / f"{slug}.html",
-        )
+        render_to_file(jenv, "static.html", ctx, SITE_DIR / f"{slug}.html")
 
+    # 記事ページ：RSS画像がある記事だけ og:image を出す
     for a in articles:
         rel = related_articles(a, articles, k=6)
 
-        # description for OG
-        desc = (a.get("summary", "") or "").strip()
-        if not desc:
-            # very small fallback, strip tags from body_html
-            desc = re.sub(r"\s+", " ", re.sub(r"(?is)<[^>]+>", " ", a.get("body_html", ""))).strip()[:200]
-        if not desc:
-            desc = site_desc
-
-        og_img = a.get("hero_image", "") or default_og
+        og_img = _abs_image_url(base_url, a.get("hero_image", "") or "")
 
         ctx = dict(base_ctx)
         ctx.update(
@@ -394,18 +381,14 @@ Sitemap: {base_url}/sitemap.xml
                 "ranking": ranking,
                 "new_articles": new_articles,
                 "policy_block": FIXED_POLICY_BLOCK.format(contact_email=cfg["site"]["contact_email"]),
-                "title": a.get("title", site_title),
-                "description": desc,
+                "title": a.get("title", cfg["site"].get("title", "Nompower")),
+                "description": (a.get("summary", "") or cfg["site"].get("description", "Daily digest"))[:200],
                 "canonical": f"{base_url}{a['path']}",
-                "og_image": og_img,
+                "og_type": "article",
+                "og_image": og_img,  # ←ここが空ならメタは出ない（デフォルト無し）
             }
         )
-        render_to_file(
-            jenv,
-            "article.html",
-            ctx,
-            SITE_DIR / a["path"].lstrip("/"),
-        )
+        render_to_file(jenv, "article.html", ctx, SITE_DIR / a["path"].lstrip("/"))
 
 
 def write_last_run(cfg: dict, payload: dict[str, Any]) -> None:
