@@ -295,6 +295,8 @@ def build_site(cfg: dict, articles: list[dict]) -> None:
     SITE_DIR.mkdir(parents=True, exist_ok=True)
     (SITE_DIR / "articles").mkdir(parents=True, exist_ok=True)
     (SITE_DIR / "assets").mkdir(parents=True, exist_ok=True)
+    (SITE_DIR / "og").mkdir(parents=True, exist_ok=True)
+    write_asset(SITE_DIR / "og" / "default.jpg", STATIC_DIR / "og" / "default.jpg")
 
     write_asset(SITE_DIR / "assets" / "style.css", STATIC_DIR / "style.css")
     write_asset(SITE_DIR / "assets" / "fx.js", STATIC_DIR / "fx.js")
