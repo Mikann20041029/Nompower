@@ -8,6 +8,8 @@ from slugify import slugify
 import json
 import re
 import html as _html
+import urllib.request
+from urllib.parse import urlparse
 
 from .util import (
     ROOT,
