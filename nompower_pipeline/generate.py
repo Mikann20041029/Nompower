@@ -419,7 +419,9 @@ Sitemap: {base_url}/sitemap.xml
     for a in articles:
         rel = related_articles(a, articles, k=6)
 
-        og_img = _abs_image_url(base_url, a.get("hero_image", "") or "")
+        src = a.get("hero_image", "") or ""
+        og_img = cache_og_image(base_url, src, a.get("id", "article"))
+
 
         ctx = dict(base_ctx)
         ctx.update(
