@@ -51,3 +51,4 @@ https://www.reddit.com/r/technology/comments/1qrsdx0/ice_is_using_a_terrifying_p
 https://www.reddit.com/r/technology/comments/1qrrwfs/oracle_seeks_to_build_bridges_with_mysql
 https://www.reddit.com/r/technology/comments/1qrrrvp/instagram_might_soon_let_you_remove_yourself_from
 https://www.reddit.com/r/technology/comments/1qrvrs8/microsoft_to_disable_ntlm_by_default_in_future
+https://www.reddit.com/r/technology/comments/1qrvqfu/google_disrupts_ipidea_residential_proxy_networks
