@@ -300,6 +300,7 @@ def build_site(cfg: dict, articles: list[dict]) -> None:
 
     write_asset(SITE_DIR / "assets" / "style.css", STATIC_DIR / "style.css")
     write_asset(SITE_DIR / "assets" / "fx.js", STATIC_DIR / "fx.js")
+    default_og = f"{base_url}/assets/og/default.jpg"
 
     base_url = cfg["site"]["base_url"].rstrip("/")
     robots = f"""User-agent: *
