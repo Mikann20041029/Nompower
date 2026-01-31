@@ -4,7 +4,14 @@
 <title>Nompower</title>
 <link>https://nompower.mikanntool.com/</link>
 <description>Daily digest</description>
-<lastBuildDate>Sat, 31 Jan 2026 09:20:06 +0000</lastBuildDate>
+<lastBuildDate>Sat, 31 Jan 2026 10:12:26 +0000</lastBuildDate>
+<item>
+<title>Quantization-Aware Distillation for NVFP4 Inference Accuracy Recovery</title>
+<link>https://nompower.mikanntool.com/articles/2026-01-31-quantization-aware-distillation-for-nvfp4-inference-accuracy-recovery.html</link>
+<guid isPermaLink='true'>https://nompower.mikanntool.com/articles/2026-01-31-quantization-aware-distillation-for-nvfp4-inference-accuracy-recovery.html</guid>
+<pubDate>Sat, 31 Jan 2026 10:12:26 +0000</pubDate>
+<description>Hold onto your GPUs, because the race to cram ever-larger AI brains into ever-tighter memory budgets just got a major new weapon. A quiet but potentially seismic shift in model optimization is emerging, promising to make the most aggressive</description>
+</item>
 <item>
 <title>Next-generation AI &#x27;swarms&#x27; will invade social media by mimicking human behavior and harassing real users, researchers warn</title>
 <link>https://nompower.mikanntool.com/articles/2026-01-31-next-generation-ai-swarms-will-invade-social-media-by-mimicking-human-behavior-a.html</link>
@@ -67,13 +74,6 @@
 <guid isPermaLink='true'>https://nompower.mikanntool.com/articles/2026-01-30-el0n-msk-had-more-extensive-ties-to-epstein-than-previously-known-emails-show.html</guid>
 <pubDate>Fri, 30 Jan 2026 23:15:14 +0000</pubDate>
 <description>Just when you thought the final chapter on the Jeffrey Epstein saga had been written, a fresh batch of emails threatens to pull another tech titan deeper into the orbit of the infamous financier. The Digital Paper Trail Expands According to</description>
-</item>
-<item>
-<title>Autonomous cars, drones cheerfully obey prompt injection by road sign</title>
-<link>https://nompower.mikanntool.com/articles/2026-01-30-autonomous-cars-drones-cheerfully-obey-prompt-injection-by-road-sign.html</link>
-<guid isPermaLink='true'>https://nompower.mikanntool.com/articles/2026-01-30-autonomous-cars-drones-cheerfully-obey-prompt-injection-by-road-sign.html</guid>
-<pubDate>Fri, 30 Jan 2026 22:12:26 +0000</pubDate>
-<description>Imagine a world where a simple sticker on a street sign could convince a self-driving car to take a wrong turn or command a delivery drone to drop its package in a lake. That unsettling future isn&#x27;t as distant as we&#x27;d hope, as recent experi</description>
 </item>
 </channel>
 </rss>
