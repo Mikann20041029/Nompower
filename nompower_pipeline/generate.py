@@ -343,6 +343,9 @@ Sitemap: {base_url}/sitemap.xml
         "index.html",
         base_ctx,
         SITE_DIR / "index.html",
+        "canonical": base_url + "/",
+        "og_image": default_og,
+
     )
 
     static_pages = [
