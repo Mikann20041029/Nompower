@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{{ title }}</title>
   <meta name="description" content="{{ description }}" />
-  <link rel="stylesheet" href="/assets/style.css" />
+
+  <link rel="stylesheet" href="/assets/style.css">
   <script defer src="/assets/fx.js"></script>
 
   {% if canonical %}
@@ -17,15 +18,16 @@
   {% if canonical %}
   <meta property="og:url" content="{{ canonical }}" />
   {% endif %}
-  <meta property="og:type" content="website" />
+  <meta property="og:type" content="{{ og_type | default('website') }}" />
+
+  {# 画像があるときだけ OG/Twitter(X) 画像を出す（デフォルト画像は一切なし） #}
+  {% if og_image %}
   <meta property="og:image" content="{{ og_image }}" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="{{ title }}" />
-  <meta name="twitter:description" content="{{ description }}" />
   <meta name="twitter:image" content="{{ og_image }}" />
+  {% endif %}
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XFS7X77BN2"></script>
@@ -33,10 +35,8 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-XFS7X77BN2');
   </script>
-
 </head>
 
 <body>
@@ -45,7 +45,6 @@
 
   <header class="topbar">
     <a class="brand" href="/">{{ site.brand_name }}</a>
-
     <nav class="nav">
       <a class="btn" href="/#new">New</a>
       <a class="btn" href="/#ranking">Ranking</a>
@@ -54,23 +53,29 @@
     </nav>
   </header>
 
-  <div class="page-grid">
-  <aside class="ad-rail ad-rail-left">
-    <div class="ad-rail-inner">
-      {{ ads_rail_left | safe }}
-    </div>
-  </aside>
+  <main class="wrap">
+    <section class="ad-slot ad-top">
+      {{ ads_top | safe }}
+    </section>
 
-  <main class="page-main">
-    <div class="wrap">
-      {# ここに今までのメイン本文/コンテンツ #}
-      {{ content | safe }}
-    </div>
+    {{ content | safe }}
+
+    <section class="ad-slot ad-bottom">
+      {{ ads_bottom | safe }}
+    </section>
+
+    <footer class="footer">
+      <div class="foot-links">
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/disclaimer.html">Disclaimer</a>
+      </div>
+      <div class="foot-meta">
+        <span>Updated: {{ now_iso }}</span>
+        <span>·</span>
+        <span><a href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a></span>
+      </div>
+    </footer>
   </main>
-
-  <aside class="ad-rail ad-rail-right">
-    <div class="ad-rail-inner">
-      {{ ads_rail_right | safe }}
-    </div>
-  </aside>
-</div>
+</body>
+</html>
