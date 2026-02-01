@@ -8,6 +8,68 @@
 
   <link rel="stylesheet" href="/assets/style.css">
   <script defer src="/assets/fx.js"></script>
+  <script>
+  // 本番でもON/OFFできる（URLに ?adsdebug=1 を付けるとON）
+  (function(){
+    var on = false;
+    try {
+      on = (location.search.includes("adsdebug=1") || localStorage.getItem("adsdebug") === "1");
+    } catch(e) {}
+    window.__ads_debug = on;
+    if (on) console.log("[ads] __ads_debug = ON");
+  })();
+</script>
+
+<script defer>
+(function(){
+  function log(){ if(window.__ads_debug) console.log.apply(console, arguments); }
+
+  function observeSlot(el){
+    if(!("IntersectionObserver" in window)) return;
+    var seen = false;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(ent){
+        if(!seen && ent.isIntersecting){
+          seen = true;
+          log("[ads] slot entered viewport:", el.getAttribute("data-ad-slot") || el.className, new Date().toISOString());
+          io.disconnect();
+        }
+      });
+    }, {root:null, threshold:0.01});
+    io.observe(el);
+  }
+
+  function initAdsDebug(){
+    var t = new Date().toISOString();
+    var top = document.querySelector(".ad-slot.ad-top");
+    var mid = document.querySelector(".ad-slot.ad-mid");
+    var bot = document.querySelector(".ad-slot.ad-bottom");
+
+    log("[ads] DOM ready:", t);
+    log("[ads] slot exists? top=", !!top, "mid=", !!mid, "bottom=", !!bot);
+
+    if(top) observeSlot(top);
+    if(mid) observeSlot(mid);
+    if(bot) observeSlot(bot);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAdsDebug);
+  } else {
+    initAdsDebug();
+  }
+
+  // pushState対応（SPAっぽい遷移でも再チェック）
+  (function(){
+    var _ps = history.pushState;
+    var _rs = history.replaceState;
+    function fire(){ setTimeout(initAdsDebug, 0); }
+    history.pushState = function(){ var r=_ps.apply(this, arguments); fire(); return r; };
+    history.replaceState = function(){ var r=_rs.apply(this, arguments); fire(); return r; };
+    window.addEventListener("popstate", fire);
+  })();
+})();
+</script>
 
   {% if canonical %}
   <link rel="canonical" href="{{ canonical }}" />
