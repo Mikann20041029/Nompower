@@ -149,6 +149,53 @@ def classify_genre(title: str, summary: str) -> str:
 
     return "general"
 
+ADS_PATH = None  # set below in main init if you already have ROOT; otherwise leave
+
+def load_ads(ads_path):
+    # ads.json format: { "genre": [ {id,title,code,detail}, ... ], ... }
+    try:
+        p = Path(ads_path)
+        if not p.exists():
+            return {}
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"[ads] load failed: {e}")
+        return {}
+
+def pick_ad_for_genre(ads_dict: dict, genre: str):
+    # returns a single ad dict or None
+    if not isinstance(ads_dict, dict):
+        return None
+    pool = ads_dict.get(genre) or ads_dict.get("general") or []
+    if not pool:
+        return None
+    # simplest phase1: random pick
+    try:
+        return random.choice(pool)
+    except Exception:
+        return pool[0]
+
+def render_affiliate_section(ad: dict) -> str:
+    """
+    Build a small HTML block to append at the end of body_html.
+    ad['code'] is pasted by the user as-is (HTML/JS/link).
+    """
+    if not ad:
+        return ""
+    title = (ad.get("title") or "Recommended").strip()
+    detail = (ad.get("detail") or "").strip()
+    code = (ad.get("code") or "").strip()
+    if not code:
+        return ""
+
+    # Keep tags simple (<p>, <h2>, <ul><li>, <a>) to survive sanitizer.
+    parts = []
+    parts.append("<h2>Recommended</h2>")
+    if detail:
+        parts.append(f"<p>{html.escape(detail)}</p>")
+    # IMPORTANT: code is inserted raw (user-provided). Do NOT escape.
+    parts.append(f"<div class='aff-code'>{code}</div>")
+    return "\n".join(parts).strip()
 
 def choose_ad(ads_catalog: dict, genre: str) -> dict | None:
     """
