@@ -1,18 +1,254 @@
 {
-  "tech": [
+  "shopping": [
     {
-      "id": "vpn-001",
-      "title": "Fast VPN Service",
-      "code": "<a href='https://affiliate.example.com'>Try this VPN</a>",
-      "detail": "高速で安定したVPN。リモートワークや海外サービス利用時に向いている。"
+      "id": "taobao-global-001",
+      "title": "Taobao-Global",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/fs-bin/click?id=ksxm8EWJoFA&offerid=1927697.22&type=3&subid=0\" target=\"_blank\" rel=\"nofollow noopener\">Taobao-Global</a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1927697.22&type=3&subid=0\">",
+      "detail": "Cross-border e-commerce / international shopping (Taobao Global). Best for articles about online marketplaces, China tech, importing goods, deal-hunting, shopping apps, global commerce."
     }
   ],
-  "finance": [
+  "fashion": [
     {
-      "id": "finance-001",
-      "title": "Expense Tracker",
-      "code": "<a href='https://affiliate.example.com'>Manage your expenses</a>",
-      "detail": "個人の支出管理を自動化できるツール。"
+      "id": "oxygenclothing-jlindeberg-polo-001",
+      "title": "Oxygen Clothing - J.Lindeberg Tour Tech Long Sleeve Polo",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1068147.454602652507102&type=2&murl=https%3a%2f%2fwww.oxygenclothing.co.uk%2fitem%2fjlindeberg%2ftour-tech-long-sleeve-polo-shirt%2f1DTPJ\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://d13qso5xfejx18.cloudfront.net/product-media/80C3/1000/1000/0G0A0947.jpg\" alt=\"J.Lindeberg Tour Tech Long Sleeve Polo\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1068147.454602652507102&type=2&subid=0\">",
+      "detail": "Fashion / apparel product link (UK retailer Oxygen Clothing). Best for articles about clothing, style, menswear, golf/active wear, shopping guides, brand launches, retail news."
+    },
+    {
+      "id": "oxygenclothing-mooseknuckles-shorts-001",
+      "title": "Oxygen Clothing - Moose Knuckles Light Years Jersey Short",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1068147.454603432137989&type=2&murl=https%3a%2f%2fwww.oxygenclothing.co.uk%2fitem%2fmoose-knuckles%2flight-years-jersey-short%2f172UN\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://d13qso5xfejx18.cloudfront.net/product-media/6OA7/1000/1000/IMG4921.jpg\" alt=\"Moose Knuckles Light Years Jersey Short\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1068147.454603432137989&type=2&subid=0\">",
+      "detail": "Fashion / apparel product link. Best for articles about streetwear, menswear, athleisure, seasonal outfits, shopping trends, retail/e-commerce news."
+    }
+  ],
+  "home_appliances": [
+    {
+      "id": "fensa-built-in-oven-kit-001",
+      "title": "Tienda Fensa - Built-in Oven + Cooktop + Hood Kit",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1659758.454077349248618484063611&type=2&murl=https%3a%2f%2fwww.tiendafensa.cl%2fkit-horno-empotrable-fensa-f-1060r-a-encimera-fensa-fce-4-3hf-t-campana-fensa-standard-fx-u6160%2fp%3fidsku%3d856901222%26utm_source%3dallin%26utm_medium%3demail\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://electroluxcl.vteximg.com.br/arquivos/ids/181359_2\" alt=\"Fensa oven kit\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1659758.454077349248618484063611&type=2&subid=0\">",
+      "detail": "Home appliances (kitchen set: oven/cooktop/hood). Best for articles about home upgrades, kitchen renovation, appliance buying guides, energy efficiency, home/lifestyle tech."
+    },
+    {
+      "id": "fensa-stove-5-burners-001",
+      "title": "Tienda Fensa - 5-burner Stove",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1659758.4540711671058312802628500&type=2&murl=https%3a%2f%2fwww.tiendafensa.cl%2fcocina-fensa-5-platos-56000t%2fp%3fidsku%3d856900750%26utm_source%3dallin%26utm_medium%3demail\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://electroluxcl.vteximg.com.br/arquivos/ids/184245_2\" alt=\"Fensa stove\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1659758.4540711671058312802628500&type=2&subid=0\">",
+      "detail": "Home appliances (kitchen). Best for home improvement, appliance replacement, cooking/kitchen lifestyle, product deal news."
+    },
+    {
+      "id": "fensa-top-load-washer-16kg-001",
+      "title": "Tienda Fensa - Top Load Washer 16kg",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1659758.4540715247097989064728299&type=2&murl=https%3a%2f%2fwww.tiendafensa.cl%2flavadora-fensa-automatica-carga-superior-16kg-economica---premium-care-16sz%2fp%3fidsku%3d856900780%26utm_source%3dallin%26utm_medium%3demail\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://electroluxcl.vteximg.com.br/arquivos/ids/183230_2\" alt=\"Fensa washer 16kg\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1659758.4540715247097989064728299&type=2&subid=0\">",
+      "detail": "Home appliances (laundry). Best for home/lifestyle, household cost-saving, appliance guides, moving/relocation, family life topics."
+    },
+    {
+      "id": "fensa-dishwasher-14-sets-001",
+      "title": "Tienda Fensa - Dishwasher 14 place settings",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1659758.454079039929782304334315&type=2&murl=https%3a%2f%2fwww.tiendafensa.cl%2flavavajillas-fensa-14-cubiertos-gris-experience-care-con-programa-economico-14sz%2fp%3fidsku%3d856901699%26utm_source%3dallin%26utm_medium%3demail\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://electroluxcl.vteximg.com.br/arquivos/ids/188746_2\" alt=\"Fensa dishwasher\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1659758.454079039929782304334315&type=2&subid=0\">",
+      "detail": "Home appliances (dishwasher). Best for home improvement, lifestyle convenience, productivity-at-home, appliance comparisons."
+    },
+    {
+      "id": "fensa-cooktop-4-burners-001",
+      "title": "Tienda Fensa - Cooktop 4 burners",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1659758.454078355827758694584253&type=2&murl=https%3a%2f%2fwww.tiendafensa.cl%2fencimera-fensa-fce-4-3hf-t%2fp%3fidsku%3d856900766%26utm_source%3dallin%26utm_medium%3demail\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://electroluxcl.vteximg.com.br/arquivos/ids/188711_2\" alt=\"Fensa cooktop\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1659758.454078355827758694584253&type=2&subid=0\">",
+      "detail": "Home appliances (kitchen). Best for renovation/home upgrade, cooking-related lifestyle, product price drops, household gear."
+    }
+  ],
+  "pet_care": [
+    {
+      "id": "canadapetcare-promectin-plus-001",
+      "title": "CanadaPetCare - Promectin Plus (Horse Redwormer)",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=354333.398663103&type=2&murl=https%3a%2f%2fwww.canadapetcare.com%2fpromectin-plus-pack%2fhorse-redwormers-treatment-889-3103.aspx%3futm_source%3dlsfeed\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://www.canadapetcare.com/images/ProductImagesNew/Jurox-Promectin-PLUS-allwormer-paste_03162023_021249.jpg\" alt=\"Promectin Plus\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=354333.398663103&type=2&subid=0\">",
+      "detail": "Pet/animal care product link (dewormer). Best for articles about pets, veterinary care, animal health, horse care, livestock, pet supplies, cost-saving on pet meds."
+    },
+    {
+      "id": "canadapetcare-fiprotec-spot-on-001",
+      "title": "CanadaPetCare - FIPROTEC Spot On (Dogs flea & tick)",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=354333.398662921&type=2&murl=https%3a%2f%2fwww.canadapetcare.com%2ffiprotec-spot-on-pack%2fdogs-flea-and-tick-control-treatment-784-2921.aspx%3futm_source%3dlsfeed\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://www.canadapetcare.com/images/ProductImagesNew/FIPROTEC-DOG-10-20KG-MED-ORANGE_10032023_212203.jpg\" alt=\"FIPROTEC Spot On\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=354333.398662921&type=2&subid=0\">",
+      "detail": "Pet care (flea/tick treatment). Best for pet health, seasonal pest topics, dog care guides, pet product recommendations."
+    },
+    {
+      "id": "canadapetcare-kyron-cani-vit-001",
+      "title": "CanadaPetCare - Kyron Cani-Vit Supplement Powder",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=354333.398662912&type=2&murl=https%3a%2f%2fwww.canadapetcare.com%2fkyron-cani-vit-supplement-powder-pack%2fsupplements-vitamins-and-minerals-treatment-838-2912.aspx%3futm_source%3dlsfeed\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://www.canadapetcare.com/images/ProductImagesNew/CANI-VIT_10032023_210509.jpg\" alt=\"Cani-Vit\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=354333.398662912&type=2&subid=0\">",
+      "detail": "Pet supplements (vitamins/minerals). Best for pet nutrition, wellness, aging pets, preventative care, pet lifestyle."
+    },
+    {
+      "id": "canadapetcare-bob-martin-multicare-001",
+      "title": "CanadaPetCare - Bob Martin Multicare Condition Tablets",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=354333.398662767&type=2&murl=https%3a%2f%2fwww.canadapetcare.com%2fbob-martin-multicare-condition-tablets-pack%2fsupplements-nutritional-treatment-792-2767.aspx%3futm_source%3dlsfeed\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://www.canadapetcare.com/images/ProductImagesNew/Bob-Martin-Medium-Dog-Multicare-Condition-50-Tablets_04272023_014646.jpg\" alt=\"Bob Martin Multicare\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=354333.398662767&type=2&subid=0\">",
+      "detail": "Pet supplements (condition tablets). Best for dog health, nutrition, wellness routines, pet care tips, seasonal health."
+    },
+    {
+      "id": "canadapetcare-dorwest-wheatgerm-oil-001",
+      "title": "CanadaPetCare - Dorwest Wheatgerm Oil (Dogs & Cats)",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=354333.398662884&type=2&murl=https%3a%2f%2fwww.canadapetcare.com%2fdorwest-wheatgerm-oil-liquid-pack%2fhomeopathic-vitamins-and-supplements-treatment-826-2884.aspx%3futm_source%3dlsfeed\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://www.canadapetcare.com/images/ProductImagesNew/Dorwest-Wheatgerm-Oil-Liquid-for-Dogs-and-Cats-100ml_08082023_021208.jpg\" alt=\"Dorwest Wheatgerm Oil\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=354333.398662884&type=2&subid=0\">",
+      "detail": "Pet supplements (oil). Best for pet skin/coat topics, nutrition, wellness, grooming, seasonal dryness/allergy discussions."
+    }
+  ],
+  "crafts": [
+    {
+      "id": "pandahall-shell-pendants-001",
+      "title": "PandaHall - Freshwater Shell Pendants (Teardrop)",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1518542.3956313065573486558913681&type=2&murl=https%3a%2f%2fwww.pandahall.com%2fp-1777524-freshwater-shell-pendants-dyed-teardrop.html%3fcurrency%3dUSD\" target=\"_blank\" rel=\"nofollow noopener\">PandaHall Freshwater Shell Pendants, Dyed, teardrop, Orange Red, 18~19x13~14x1~3mm, Hole: 1.5mm Freshwater Shell Teardrop Red</a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1518542.3956313065573486558913681&type=2&subid=0\">",
+      "detail": "DIY crafts / jewelry-making supplies. Best for articles about handmade, maker culture, side hustles (craft selling), Etsy-like trends, creative tools, hobby communities."
+    },
+    {
+      "id": "pandahall-lampwork-beads-001",
+      "title": "PandaHall - Handmade Lampwork Beads (Flower Pattern)",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1518542.395636978587670687644698&type=2&murl=https%3a%2f%2fwww.pandahall.com%2fp-2036911-handmade-lampwork-beads-flat-round-with-flower-pattern-sea-green.html%3fcurrency%3dUSD\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://feedimg.pandahall.com/phorgphotos/e3088a16-29e2-439e-80d1-36c00b49c21c.jpg\" alt=\"Lampwork beads\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1518542.395636978587670687644698&type=2&subid=0\">",
+      "detail": "DIY crafts / beads supply. Best for hobby/maker stories, creativity, small business craft selling, handmade accessories, gift ideas."
+    },
+    {
+      "id": "pandahall-cutting-dies-stamps-001",
+      "title": "PandaHall - Cutting Dies & Stamps (Scrapbooking)",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1518542.3956311917971364563709984&type=2&murl=https%3a%2f%2fwww.pandahall.com%2fp-2696684-globleland-1pc-carbon-steel-cutting-dies-stencils-with-1pc-pvc-plastic-stamps-for-diy-scrapbooking-photo-album.html%3fcurrency%3dUSD\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://feedimg.pandahall.com/phorgphotos/fb5f9f5b-a693-4640-8e72-0b2409e5e672.jpg\" alt=\"Cutting dies & stamps\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1518542.3956311917971364563709984&type=2&subid=0\">",
+      "detail": "DIY paper crafts / scrapbooking tools. Best for creator economy, journaling, stationery trends, maker tool roundups."
+    },
+    {
+      "id": "pandahall-rhinestone-pendants-001",
+      "title": "PandaHall - Rainbow Rhinestone Pendants (Stainless Steel)",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1518542.395631346107392967449583&type=2&murl=https%3a%2f%2fwww.pandahall.com%2fp-2855434-rainbow-color-304-stainless-steel-pendants-rhinestone-settings-cadmium-free-nickel-free-lead-free-flat-round-with-eye.html%3fcurrency%3dUSD\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://feedimg.pandahall.com/phorgphotos/9d329a58-19d6-4bd5-8520-6ea1dda02ab4.jpg\" alt=\"Rhinestone pendants\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1518542.395631346107392967449583&type=2&subid=0\">",
+      "detail": "DIY jewelry components / craft supplies. Best for handmade accessories, fashion DIY, maker culture, gift-making, creative hobby content."
+    }
+  ],
+  "home_improvement": [
+    {
+      "id": "waterdrop-lg-lt1000p-filter-001",
+      "title": "Waterdrop - LG LT1000P Refrigerator Water Filter",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1888875.539508032906088186656813&type=2&murl=https%3a%2f%2fwww.waterdropfilter.com%2fproducts%2flg-lt1000p-refrigerator-water-filter%3fvariant%3d39496468725842\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://cdn.shopify.com/s/files/1/0078/6156/7570/products/7.png?v=1695349733\" alt=\"LG LT1000P water filter\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1888875.539508032906088186656813&type=2&subid=0\">",
+      "detail": "Home/water filtration product. Best for articles about clean water, home maintenance, health-at-home, appliance upkeep, sustainability, household cost-saving."
+    },
+    {
+      "id": "waterdrop-ro-system-wd-g3p800-001",
+      "title": "Waterdrop - Reverse Osmosis System (WD-G3P800 combo kit)",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=1888875.5395017266159901776996987&type=2&murl=https%3a%2f%2fwww.waterdropfilter.com%2fproducts%2freverse-osmosis-system-2-year-combo-kit-wd-g3p800-w-cfcb%3fvariant%3d39922334761042\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://cdn.shopify.com/s/files/1/0078/6156/7570/products/WD-G3P800-W-CFB.png?v=1734414351\" alt=\"Waterdrop reverse osmosis system\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1888875.5395017266159901776996987&type=2&subid=0\">",
+      "detail": "Home water purification system (reverse osmosis). Best for health/wellness at home, sustainability, home improvement, emergency preparedness, household infrastructure topics."
+    }
+  ]
+{
+  "education": [
+    {
+      "id": "online-degree-blockchain-001",
+      "title": "Online Degree™ in Blockchain",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/fs-bin/click?id=ksxm8EWJoFA&offerid=980864.21&type=3&subid=0\" target=\"_blank\" rel=\"nofollow noopener\">Online Degree™ in Blockchain</a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=980864.21&type=3&subid=0\">",
+      "detail": "Online education program focused on blockchain. Best for articles about blockchain, crypto infrastructure, Web3 careers, tech upskilling, remote learning, certification paths."
+    },
+    {
+      "id": "edureka-cloud-computing-001",
+      "title": "Edureka - Cloud Computing Certification Courses",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=596027.4253614166323898&type=2&murl=https%3a%2f%2fwww.edureka.co%2fcloud-computing-certification-courses%3futm_source%3drakuten%26utm_medium%3ddatafeed%26utm_campaign%3dcloud&LSNSUBSITE=LSNSUBSITE\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://cdn2.hubspot.net/hubfs/493391/Affiliate_April_2019/AWS-10.png\" alt=\"Edureka Cloud Computing\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=596027.4253614166323898&type=2&subid=0\">",
+      "detail": "Cloud computing training/certification (AWS/Cloud track). Best for articles about cloud services, DevOps, engineering careers, certification study, tech skill upgrades."
+    },
+    {
+      "id": "edureka-google-cloud-architect-001",
+      "title": "Edureka - Google Cloud Architect Certification Training",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=596027.4253614052270086&type=2&murl=https%3a%2f%2fwww.edureka.co%2fgoogle-cloud-architect-certification-training&LSNSUBSITE=LSNSUBSITE\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://d1jnx9ba8s6j9r.cloudfront.net/imgver.1551437392/img/co_img_552_1520329650.png\" alt=\"Edureka Google Cloud Architect\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=596027.4253614052270086&type=2&subid=0\">",
+      "detail": "Google Cloud Architect certification training. Best for GCP, cloud architecture, infrastructure, security, enterprise cloud news, career switching/upskilling content."
+    },
+    {
+      "id": "edureka-selenium-webdriver-001",
+      "title": "Edureka - Testing with Selenium WebDriver",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=596027.4253614052270084&type=2&murl=https%3a%2f%2fwww.edureka.co%2ftesting-with-selenium-webdriver&LSNSUBSITE=LSNSUBSITE\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://d1jnx9ba8s6j9r.cloudfront.net/imgver.1551437392/img/co_img_535_1529999716.png\" alt=\"Edureka Selenium\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=596027.4253614052270084&type=2&subid=0\">",
+      "detail": "Software testing / QA automation course (Selenium). Best for articles about software quality, testing automation, dev tooling, CI/CD, engineering learning."
+    }
+  ],
+  "software_tools": [
+    {
+      "id": "wondershare-pdfelement-001",
+      "title": "Wondershare PDFelement",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=764692.3716019&type=2&murl=https%3a%2f%2fpdf.wondershare.com%2f\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://neveragain.allstatics.com/2019/assets/icon/logo/pdfelement-horizontal.png\" alt=\"PDFelement\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=764692.3716019&type=2&subid=0\">",
+      "detail": "PDF editor/converter tool. Best for articles about productivity, document workflows, PDF security, paperless office, study/assignment management, business ops."
+    },
+    {
+      "id": "wondershare-recoverit-001",
+      "title": "Wondershare Recoverit (Data Recovery)",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=764692.3716012&type=2&murl=https%3a%2f%2frecoverit.wondershare.com%2f\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://neveragain.allstatics.com/2019/assets/icon/logo/recoverit-horizontal.png\" alt=\"Recoverit\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=764692.3716012&type=2&subid=0\">",
+      "detail": "Data recovery software. Best for articles about backups, ransomware/incident response, storage failures, SSD/HDD issues, smartphone recovery, cybersecurity hygiene."
+    },
+    {
+      "id": "wondershare-uniconverter-001",
+      "title": "Wondershare UniConverter (Video Converter)",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/link?id=ksxm8EWJoFA&offerid=764692.371606&type=2&murl=https%3a%2f%2fvideoconverter.wondershare.com%2f\" target=\"_blank\" rel=\"nofollow noopener\"><img border=\"0\" src=\"https://neveragain.allstatics.com/2019/assets/icon/logo/uniconverter-horizontal.png\" alt=\"UniConverter\"></a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=764692.371606&type=2&subid=0\">",
+      "detail": "Video conversion/editing utility. Best for creator economy topics, video workflows, social media posting, compression, format compatibility, content production tips."
+    }
+  ],
+  "standards": [
+    {
+      "id": "iso-16067-2-2004-001",
+      "title": "ISO 16067-2:2004",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/fs-bin/click?id=ksxm8EWJoFA&offerid=208750.10000105&type=3&subid=0\" target=\"_blank\" rel=\"nofollow noopener\">ISO 16067-2:2004</a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=208750.10000105&type=3&subid=0\">",
+      "detail": "ISO standards document purchase. Best for articles about compliance, manufacturing, quality systems, environmental metrics, corporate sustainability reporting."
+    },
+    {
+      "id": "iso-5989-1995-001",
+      "title": "ISO 5989:1995",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/fs-bin/click?id=ksxm8EWJoFA&offerid=208750.10000080&type=3&subid=0\" target=\"_blank\" rel=\"nofollow noopener\">ISO 5989:1995</a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=208750.10000080&type=3&subid=0\">",
+      "detail": "ISO standards document purchase. Best for quality control, lab/testing procedures, industrial specs, regulated industries, compliance operations."
+    },
+    {
+      "id": "iso-15781-2019-001",
+      "title": "ISO 15781:2019",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/fs-bin/click?id=ksxm8EWJoFA&offerid=208750.10000093&type=3&subid=0\" target=\"_blank\" rel=\"nofollow noopener\">ISO 15781:2019</a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=208750.10000093&type=3&subid=0\">",
+      "detail": "ISO standards document purchase. Best for industrial process, safety/compliance, engineering documentation, regulated manufacturing topics."
+    },
+    {
+      "id": "iso-14001-2015-001",
+      "title": "ISO 14001:2015",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/fs-bin/click?id=ksxm8EWJoFA&offerid=208750.10000059&type=3&subid=0\" target=\"_blank\" rel=\"nofollow noopener\">ISO 14001:2015</a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=208750.10000059&type=3&subid=0\">",
+      "detail": "ISO 14001 environmental management standard. Best for sustainability, ESG, corporate compliance, manufacturing footprint, environmental policy and operations."
+    }
+  ],
+  "shopping": [
+    {
+      "id": "landing-page-home-001",
+      "title": "HOME",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/fs-bin/click?id=ksxm8EWJoFA&offerid=1791245.3&type=3&subid=0\" target=\"_blank\" rel=\"nofollow noopener\">HOME</a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1791245.3&type=3&subid=0\">",
+      "detail": "General landing page labeled 'HOME' (insufficient product detail in code). Use as a fallback for broad e-commerce/shopping/news topics, deals, general consumer web traffic."
+    },
+    {
+      "id": "outlet-landing-page-001",
+      "title": "Lading Page - OUTLET",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/fs-bin/click?id=ksxm8EWJoFA&offerid=1520023.63&type=3&subid=0\" target=\"_blank\" rel=\"nofollow noopener\">Lading Page - OUTLET</a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1520023.63&type=3&subid=0\">",
+      "detail": "Outlet landing page (likely discount/clearance). Best for deal-hunting, shopping savings, retail trends, price-drop news, coupon culture."
+    },
+    {
+      "id": "coupon-chegueiopaque-10off-001",
+      "title": "10% de desconto (Cupom:CHEGUEIOPAQUE)",
+      "type": "html",
+      "code": "<a href=\"https://click.linksynergy.com/fs-bin/click?id=ksxm8EWJoFA&offerid=1520023.32&type=3&subid=0\" target=\"_blank\" rel=\"nofollow noopener\">10% de desconto (Cupom:CHEGUEIOPAQUE)</a><img border=\"0\" width=\"1\" height=\"1\" alt=\"\" src=\"https://ad.linksynergy.com/fs-bin/show?id=ksxm8EWJoFA&bids=1520023.32&type=3&subid=0\">",
+      "detail": "Coupon/discount offer (Portuguese). Best for promo/coupon-related topics, e-commerce discounts, shopping savings content, deal/discount news."
     }
   ]
 }
