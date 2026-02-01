@@ -353,7 +353,7 @@ def deepseek_article(cfg: dict, item: dict) -> str:
         "No adult content, hate, or self-harm content."
     )
 
-user = f"""
+    user = f"""
 Write an original article (HTML body only; use <p>, <h2>, <ul><li>) based on this Reddit post.
 
 IMPORTANT:
@@ -416,6 +416,7 @@ Safety/Accuracy:
         max_tokens=2400,
     )
     return sanitize_llm_html(out)
+
 
 
 def strip_leading_duplicate_title(body_html: str, title: str) -> str:
