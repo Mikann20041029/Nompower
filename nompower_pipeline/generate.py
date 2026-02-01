@@ -353,7 +353,7 @@ def deepseek_article(cfg: dict, item: dict) -> str:
         "No adult content, hate, or self-harm content."
     )
 
-        user = f"""
+user = f"""
 Write an original article (HTML body only; use <p>, <h2>, <ul><li>) based on this Reddit post.
 
 IMPORTANT:
