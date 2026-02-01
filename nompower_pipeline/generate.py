@@ -98,6 +98,117 @@ FIXED_POLICY_BLOCK = """
 <p>Contact: <a href="mailto:{contact_email}">{contact_email}</a></p>
 """.strip()
 
+def load_ads_catalog() -> dict:
+    """
+    Load affiliate ads from nompower_pipeline/ads.json.
+    You (the user) only copy-paste codes into this JSON.
+    """
+    if not ADS_JSON_PATH.exists():
+        return {"general": []}
+    try:
+        return json.loads(ADS_JSON_PATH.read_text(encoding="utf-8"))
+    except Exception as e:
+        raise RuntimeError(f"Failed to load ads.json: {e}")
+
+
+def load_ad_state() -> dict:
+    if not AD_STATE_PATH.exists():
+        return {"shown": {}, "clicks": {}}
+    try:
+        return json.loads(AD_STATE_PATH.read_text(encoding="utf-8"))
+    except Exception as e:
+        raise RuntimeError(f"Failed to load ad_state.json: {e}")
+
+
+def save_ad_state(state: dict) -> None:
+    AD_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    AD_STATE_PATH.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def classify_genre(title: str, summary: str) -> str:
+    """
+    Phase1: simple keyword rules (fast + stable).
+    Fallback: 'general'
+    """
+    text = f"{title} {summary}".lower()
+
+    rules = [
+        ("health", ["health", "hair", "sleep", "diet", "doctor", "study says", "medical", "wellness"]),
+        ("beauty", ["skincare", "beauty", "cosmetic", "laser", "dermatology", "makeup"]),
+        ("finance", ["stock", "crypto", "bitcoin", "bank", "interest rate", "loan", "tax", "investment"]),
+        ("tech", ["ai", "openai", "model", "gpu", "software", "bug", "security", "iphone", "android"]),
+        ("travel", ["travel", "flight", "hotel", "trip", "tourism", "airport"]),
+        ("study", ["learn", "exam", "toeic", "eiken", "study", "university"]),
+        ("vpn", ["vpn", "privacy", "proxy", "geoblock"]),
+        ("tools", ["tool", "formatter", "converter", "generator", "app", "extension"])
+    ]
+
+    for genre, kws in rules:
+        if any(k in text for k in kws):
+            return genre
+
+    return "general"
+
+
+def choose_ad(ads_catalog: dict, genre: str) -> dict | None:
+    """
+    Phase1: random within genre. If empty -> general.
+    """
+    pool = ads_catalog.get(genre) or []
+    if not pool and genre != "general":
+        pool = ads_catalog.get("general") or []
+    if not pool:
+        return None
+    return random.choice(pool)
+
+
+def build_affiliate_section(article_id: str, title: str, summary: str, ads_catalog: dict, base_url: str) -> tuple[str, str | None]:
+    """
+    Returns (html, chosen_ad_id)
+    Uses Cloudflare Worker /go for click tracking and redirect.
+    """
+    genre = classify_genre(title, summary)
+    ad = choose_ad(ads_catalog, genre)
+    if not ad:
+        return ("", None)
+
+    ad_id = str(ad.get("id", "")).strip() or None
+    raw_code = str(ad.get("code", "")).strip()
+
+    if not raw_code:
+        return ("", None)
+
+    # Click tracking URL (Cloudflare Worker handles /go)
+    # Example: https://nompower.mikanntool.com/go?ad=health-001&a=2026-01-31-xxxx
+    go_url = f"{base_url.rstrip('/')}/go?ad={_html.escape(ad_id or 'unknown')}&a={_html.escape(article_id)}"
+
+    # We do NOT parse or modify your affiliate code.
+    # We only wrap it in a section and add a tracked button.
+    html = f"""
+<section class="card affiliate">
+  <div class="card-h">
+    <div><strong>Recommended (matched to this story)</strong></div>
+    <div class="muted">Category: {genre}</div>
+  </div>
+
+  <p class="muted">
+    Based on today’s story, here’s a relevant option people often consider.
+    (This helps keep the site running.)
+  </p>
+
+  <div class="ad-slot ad-affiliate">
+    {raw_code}
+  </div>
+
+  <div class="cta-row">
+    <a class="pill" href="{go_url}" rel="nofollow sponsored noopener" target="_blank">
+      View offer
+    </a>
+  </div>
+</section>
+""".strip()
+
+    return (html, ad_id)
 
 def now_utc_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
