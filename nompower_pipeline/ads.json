@@ -1,1 +1,19 @@
+{
+  "tech": [
+    {
+      "id": "vpn-001",
+      "title": "Fast VPN Service",
+      "code": "<a href='https://affiliate.example.com'>Try this VPN</a>",
+      "detail": "高速で安定したVPN。リモートワークや海外サービス利用時に向いている。"
+    }
+  ],
+  "finance": [
+    {
+      "id": "finance-001",
+      "title": "Expense Tracker",
+      "code": "<a href='https://affiliate.example.com'>Manage your expenses</a>",
+      "detail": "個人の支出管理を自動化できるツール。"
+    }
+  ]
+}
 
