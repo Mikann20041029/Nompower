@@ -353,12 +353,12 @@ def deepseek_article(cfg: dict, item: dict) -> str:
         "No adult content, hate, or self-harm content."
     )
 
-    user = f"""
+        user = f"""
 Write an original article (HTML body only; use <p>, <h2>, <ul><li>) based on this Reddit post.
+
 IMPORTANT:
 - Do NOT repeat the post title in the body.
 - Do NOT output <h1> under any circumstances.
-- Do NOT restate the title as a paragraph.
 - Start directly with a short hook paragraph (<p>).
 - Use <h2> for section headings only.
 
@@ -366,18 +366,28 @@ Post title: {title}
 Permalink: {link}
 RSS summary snippet (may be partial): {summary}
 
-Requirements:
-- Target length: ~{target_words} words (roughly).
-- Structure:
-  1) Hook (1 short paragraph)
-  2) What happened (2-3 paragraphs)
-  3) Why people care (2-3 paragraphs)
-  4) Practical takeaways (bullet list)
-  5) "Source" line linking to the Reddit permalink
-- Style: slightly exaggerated / future-facing tone, but NEVER invent numbers, quotes, or events.
-- If the topic implies missing details, explicitly say what's unknown and what would confirm it.
+Structure (keep the first half as normal news digest):
+1) Hook (1 short paragraph)
+2) What happened (2-3 paragraphs)
+3) Why people care (2-3 paragraphs)
+4) Practical takeaways (bullet list)
+5) Smooth bridge to a relevant recommendation (1-2 short paragraphs) using the "Ad context" below.
+   - Do NOT paste links.
+   - Do NOT include <script>.
+   - Just write the transition text naturally.
+6) End with a short closing paragraph.
+
+Ad context (for the bridge text only; do not paste the code itself):
+- Genre: {{AD_GENRE}}
+- Ad title: {{AD_TITLE}}
+- Ad detail: {{AD_DETAIL}}
+
+Safety/Accuracy:
+- Do NOT invent numbers, quotes, or events.
+- If uncertain, say what's unknown and what would confirm it.
 - Keep it safe for general audiences.
 """.strip()
+
 
     out = ds.chat(
         model=model,
