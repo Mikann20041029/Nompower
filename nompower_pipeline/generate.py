@@ -36,9 +36,43 @@ TEMPLATES_DIR = ROOT / "nompower_pipeline" / "templates"
 STATIC_DIR = ROOT / "nompower_pipeline" / "static"
 
 # === Ads (strings must be standalone and syntactically valid) ===
-ADS_TOP = """<script src="https://pl28593834.effectivegatecpm.com/bf/0c/41/bf0c417e61a02af02bb4fab871651c1b.js"></script>"""
-ADS_MID = """<script src="https://quge5.com/88/tag.min.js" data-zone="206389" async data-cfasync="false"></script>"""
-ADS_BOTTOM = """<script type="text/javascript"></script>"""  # keep simple; replace if needed
+ADS_TOP = """
+<script>
+(function(){
+  var dbg = (window.__ads_debug === true);
+  var t0 = Date.now();
+  function log(){ if(dbg) console.log.apply(console, arguments); }
+
+  log("[ads] init called", new Date().toISOString());
+
+  if (window.__monetag_loaded) {
+    log("[ads] monetag already loaded; skip", window.__monetag_loaded_at);
+    return;
+  }
+  window.__monetag_loaded = true;
+  window.__monetag_loaded_at = new Date().toISOString();
+
+  var s = document.createElement("script");
+  s.async = true;
+  s.dataset.zone = "10551684";
+  s.src = "https://nap5k.com/tag.min.js";
+
+  s.onload = function(){
+    log("[ads] monetag script loaded", "ms=", (Date.now()-t0));
+  };
+  s.onerror = function(e){
+    console.error("[ads] monetag script FAILED", e);
+  };
+
+  var parent = document.head || document.body || document.documentElement;
+  parent.appendChild(s);
+  log("[ads] monetag script appended to", parent.tagName);
+})();
+</script>
+""".strip()
+
+ADS_MID = ADS_TOP
+ADS_BOTTOM = ADS_TOP
 
 ads_rail_left = """
 <script src="https://pl28593834.effectivegatecpm.com/bf/0c/41/bf0c417e61a02af02bb4fab871651c1b.js"></script>
