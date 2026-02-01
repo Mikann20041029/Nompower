@@ -11,7 +11,7 @@ import html as _html
 import urllib.request
 from urllib.parse import urlparse
 
-from .util import (
+from nompower_pipeline.util import (
     ROOT,
     read_text,
     write_text,
