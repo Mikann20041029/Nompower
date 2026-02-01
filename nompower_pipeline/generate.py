@@ -388,6 +388,23 @@ Safety/Accuracy:
 - Keep it safe for general audiences.
 """.strip()
 
+    # ---- Phase1: pick one affiliate ad by genre and feed details to the prompt ----
+    # Decide genre from title/summary (your classify_genre already exists)
+    genre = classify_genre(title, summary)
+
+    # Resolve ads.json path (keep your current location: nompower_pipeline/ads.json)
+    # If you already have ROOT defined earlier, use it; otherwise fall back to relative.
+    ads_path = str(Path("nompower_pipeline") / "ads.json")
+    ads_dict = load_ads(ads_path)
+    ad = pick_ad_for_genre(ads_dict, genre)
+
+    ad_title = (ad.get("title") if ad else "") or ""
+    ad_detail = (ad.get("detail") if ad else "") or ""
+    # Replace placeholders in the user prompt
+    user = (user
+            .replace("{AD_GENRE}", genre)
+            .replace("{AD_TITLE}", ad_title)
+            .replace("{AD_DETAIL}", ad_detail))
 
     out = ds.chat(
         model=model,
