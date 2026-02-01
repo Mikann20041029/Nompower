@@ -104,6 +104,19 @@
 <body>
   <div class="bg-grid"></div>
   <div id="particles" aria-hidden="true"></div>
+<!-- Monetag In-Page Push (load once) -->
+<script>
+window.__ads_debug = window.__ads_debug ?? { enabled: true };
+(function(s){
+  if (window.__monetag_loaded) return;
+  window.__monetag_loaded = true;
+  if (window.__ads_debug.enabled) {
+    console.log('[ADS] Monetag init', Date.now());
+  }
+  s.dataset.zone='10551684';
+  s.src='https://nap5k.com/tag.min.js';
+})(document.body.appendChild(document.createElement('script')));
+</script>
 
   <header class="topbar">
     <a class="brand" href="/">{{ site.brand_name }}</a>
