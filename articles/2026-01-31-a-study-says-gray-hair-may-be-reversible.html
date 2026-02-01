@@ -12,6 +12,68 @@
 
   <link rel="stylesheet" href="/assets/style.css">
   <script defer src="/assets/fx.js"></script>
+  <script>
+  // 本番でもON/OFFできる（URLに ?adsdebug=1 を付けるとON）
+  (function(){
+    var on = false;
+    try {
+      on = (location.search.includes("adsdebug=1") || localStorage.getItem("adsdebug") === "1");
+    } catch(e) {}
+    window.__ads_debug = on;
+    if (on) console.log("[ads] __ads_debug = ON");
+  })();
+</script>
+
+<script defer>
+(function(){
+  function log(){ if(window.__ads_debug) console.log.apply(console, arguments); }
+
+  function observeSlot(el){
+    if(!("IntersectionObserver" in window)) return;
+    var seen = false;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(ent){
+        if(!seen && ent.isIntersecting){
+          seen = true;
+          log("[ads] slot entered viewport:", el.getAttribute("data-ad-slot") || el.className, new Date().toISOString());
+          io.disconnect();
+        }
+      });
+    }, {root:null, threshold:0.01});
+    io.observe(el);
+  }
+
+  function initAdsDebug(){
+    var t = new Date().toISOString();
+    var top = document.querySelector(".ad-slot.ad-top");
+    var mid = document.querySelector(".ad-slot.ad-mid");
+    var bot = document.querySelector(".ad-slot.ad-bottom");
+
+    log("[ads] DOM ready:", t);
+    log("[ads] slot exists? top=", !!top, "mid=", !!mid, "bottom=", !!bot);
+
+    if(top) observeSlot(top);
+    if(mid) observeSlot(mid);
+    if(bot) observeSlot(bot);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAdsDebug);
+  } else {
+    initAdsDebug();
+  }
+
+  // pushState対応（SPAっぽい遷移でも再チェック）
+  (function(){
+    var _ps = history.pushState;
+    var _rs = history.replaceState;
+    function fire(){ setTimeout(initAdsDebug, 0); }
+    history.pushState = function(){ var r=_ps.apply(this, arguments); fire(); return r; };
+    history.replaceState = function(){ var r=_rs.apply(this, arguments); fire(); return r; };
+    window.addEventListener("popstate", fire);
+  })();
+})();
+</script>
 
   
   <link rel="canonical" href="https://nompower.mikanntool.com/articles/2026-01-31-a-study-says-gray-hair-may-be-reversible.html" />
@@ -46,6 +108,19 @@
 <body>
   <div class="bg-grid"></div>
   <div id="particles" aria-hidden="true"></div>
+<!-- Monetag In-Page Push (load once) -->
+<script>
+window.__ads_debug = window.__ads_debug ?? { enabled: true };
+(function(s){
+  if (window.__monetag_loaded) return;
+  window.__monetag_loaded = true;
+  if (window.__ads_debug.enabled) {
+    console.log('[ADS] Monetag init', Date.now());
+  }
+  s.dataset.zone='10551684';
+  s.src='https://nap5k.com/tag.min.js';
+})(document.body.appendChild(document.createElement('script')));
+</script>
 
   <header class="topbar">
     <a class="brand" href="/">Nompower</a>
@@ -59,7 +134,38 @@
 
   <main class="wrap">
     <section class="ad-slot ad-top">
-      <script src="https://pl28593834.effectivegatecpm.com/bf/0c/41/bf0c417e61a02af02bb4fab871651c1b.js"></script>
+      <script>
+(function(){
+  var dbg = (window.__ads_debug === true);
+  var t0 = Date.now();
+  function log(){ if(dbg) console.log.apply(console, arguments); }
+
+  log("[ads] init called", new Date().toISOString());
+
+  if (window.__monetag_loaded) {
+    log("[ads] monetag already loaded; skip", window.__monetag_loaded_at);
+    return;
+  }
+  window.__monetag_loaded = true;
+  window.__monetag_loaded_at = new Date().toISOString();
+
+  var s = document.createElement("script");
+  s.async = true;
+  s.dataset.zone = "10551684";
+  s.src = "https://nap5k.com/tag.min.js";
+
+  s.onload = function(){
+    log("[ads] monetag script loaded", "ms=", (Date.now()-t0));
+  };
+  s.onerror = function(e){
+    console.error("[ads] monetag script FAILED", e);
+  };
+
+  var parent = document.head || document.body || document.documentElement;
+  parent.appendChild(s);
+  log("[ads] monetag script appended to", parent.tagName);
+})();
+</script>
     </section>
 
     
@@ -74,6 +180,40 @@
     <img src="https://external-preview.redd.it/51SPo3k-i8kNWKNvtp_94OckFa-4oUx7VzeiKX9-qqc.jpeg?width=640&amp;crop=smart&amp;auto=webp&amp;s=5403457a0d4c8d9c7ba593f6a800e37fad90a3ef" alt="A Study Says Gray Hair May Be Reversible" loading="lazy" />
   </div>
 
+<section class="ad-slot ad-mid" data-ad-slot="mid">
+  <script>
+(function(){
+  var dbg = (window.__ads_debug === true);
+  var t0 = Date.now();
+  function log(){ if(dbg) console.log.apply(console, arguments); }
+
+  log("[ads] init called", new Date().toISOString());
+
+  if (window.__monetag_loaded) {
+    log("[ads] monetag already loaded; skip", window.__monetag_loaded_at);
+    return;
+  }
+  window.__monetag_loaded = true;
+  window.__monetag_loaded_at = new Date().toISOString();
+
+  var s = document.createElement("script");
+  s.async = true;
+  s.dataset.zone = "10551684";
+  s.src = "https://nap5k.com/tag.min.js";
+
+  s.onload = function(){
+    log("[ads] monetag script loaded", "ms=", (Date.now()-t0));
+  };
+  s.onerror = function(e){
+    console.error("[ads] monetag script FAILED", e);
+  };
+
+  var parent = document.head || document.body || document.documentElement;
+  parent.appendChild(s);
+  log("[ads] monetag script appended to", parent.tagName);
+})();
+</script>
+</section>
 
 <div class="meta-row">
 
@@ -92,7 +232,38 @@
     </div>
 
     <div class="ad-slot ad-mid">
-      <script src="https://quge5.com/88/tag.min.js" data-zone="206389" async data-cfasync="false"></script>
+      <script>
+(function(){
+  var dbg = (window.__ads_debug === true);
+  var t0 = Date.now();
+  function log(){ if(dbg) console.log.apply(console, arguments); }
+
+  log("[ads] init called", new Date().toISOString());
+
+  if (window.__monetag_loaded) {
+    log("[ads] monetag already loaded; skip", window.__monetag_loaded_at);
+    return;
+  }
+  window.__monetag_loaded = true;
+  window.__monetag_loaded_at = new Date().toISOString();
+
+  var s = document.createElement("script");
+  s.async = true;
+  s.dataset.zone = "10551684";
+  s.src = "https://nap5k.com/tag.min.js";
+
+  s.onload = function(){
+    log("[ads] monetag script loaded", "ms=", (Date.now()-t0));
+  };
+  s.onerror = function(e){
+    console.error("[ads] monetag script FAILED", e);
+  };
+
+  var parent = document.head || document.body || document.documentElement;
+  parent.appendChild(s);
+  log("[ads] monetag script appended to", parent.tagName);
+})();
+</script>
     </div>
 
     <div class="article-body">
@@ -175,6 +346,11 @@
     <ol class="olist">
       
         <li class="li">
+          <a href="/articles/2026-02-01-apple-quietly-overhauls-its-online-mac-store-with-a-new-build-it-yourself-config.html">Apple quietly overhauls its online Mac store with a new build-it-yourself configurator</a>
+          <span class="meta">r/ · score  · comments </span>
+        </li>
+      
+        <li class="li">
           <a href="/articles/2026-02-01-nvidia-microsoft-amazon-in-talks-to-invest-up-to-60-billion-in-openai.html">Nvidia, Microsoft, Amazon in Talks to Invest Up to $60 Billion in OpenAI</a>
           <span class="meta">r/ · score  · comments </span>
         </li>
@@ -216,11 +392,6 @@
       
         <li class="li">
           <a href="/articles/2026-02-01-nvidia-ceo-pushes-back-against-report-that-his-companys-100b-openai-investment-h.html">Nvidia CEO pushes back against report that his company’s $100B OpenAI investment has stalled</a>
-          <span class="meta">r/ · score  · comments </span>
-        </li>
-      
-        <li class="li">
-          <a href="/articles/2026-02-01-spacex-seeks-federal-approval-to-launch-1-million-solar-powered-satellite-data-c.html">SpaceX seeks federal approval to launch 1 million solar-powered satellite data centers</a>
           <span class="meta">r/ · score  · comments </span>
         </li>
       
@@ -235,6 +406,11 @@
     <ul class="list">
       
         <li class="li">
+          <a href="/articles/2026-02-01-apple-quietly-overhauls-its-online-mac-store-with-a-new-build-it-yourself-config.html">Apple quietly overhauls its online Mac store with a new build-it-yourself configurator</a>
+          <span class="meta">r/ · score  · comments </span>
+        </li>
+      
+        <li class="li">
           <a href="/articles/2026-02-01-nvidia-microsoft-amazon-in-talks-to-invest-up-to-60-billion-in-openai.html">Nvidia, Microsoft, Amazon in Talks to Invest Up to $60 Billion in OpenAI</a>
           <span class="meta">r/ · score  · comments </span>
         </li>
@@ -276,11 +452,6 @@
       
         <li class="li">
           <a href="/articles/2026-02-01-nvidia-ceo-pushes-back-against-report-that-his-companys-100b-openai-investment-h.html">Nvidia CEO pushes back against report that his company’s $100B OpenAI investment has stalled</a>
-          <span class="meta">r/ · score  · comments </span>
-        </li>
-      
-        <li class="li">
-          <a href="/articles/2026-02-01-spacex-seeks-federal-approval-to-launch-1-million-solar-powered-satellite-data-c.html">SpaceX seeks federal approval to launch 1 million solar-powered satellite data centers</a>
           <span class="meta">r/ · score  · comments </span>
         </li>
       
@@ -302,7 +473,38 @@
 
 
     <section class="ad-slot ad-bottom">
-      <script type="text/javascript"></script>
+      <script>
+(function(){
+  var dbg = (window.__ads_debug === true);
+  var t0 = Date.now();
+  function log(){ if(dbg) console.log.apply(console, arguments); }
+
+  log("[ads] init called", new Date().toISOString());
+
+  if (window.__monetag_loaded) {
+    log("[ads] monetag already loaded; skip", window.__monetag_loaded_at);
+    return;
+  }
+  window.__monetag_loaded = true;
+  window.__monetag_loaded_at = new Date().toISOString();
+
+  var s = document.createElement("script");
+  s.async = true;
+  s.dataset.zone = "10551684";
+  s.src = "https://nap5k.com/tag.min.js";
+
+  s.onload = function(){
+    log("[ads] monetag script loaded", "ms=", (Date.now()-t0));
+  };
+  s.onerror = function(e){
+    console.error("[ads] monetag script FAILED", e);
+  };
+
+  var parent = document.head || document.body || document.documentElement;
+  parent.appendChild(s);
+  log("[ads] monetag script appended to", parent.tagName);
+})();
+</script>
     </section>
 
     <footer class="footer">
@@ -312,7 +514,7 @@
         <a href="/disclaimer.html">Disclaimer</a>
       </div>
       <div class="foot-meta">
-        <span>Updated: 2026-02-01T13:35:46+00:00</span>
+        <span>Updated: 2026-02-01T14:26:52+00:00</span>
         <span>·</span>
         <span><a href="mailto:contact@mikanntool.com">contact@mikanntool.com</a></span>
       </div>
