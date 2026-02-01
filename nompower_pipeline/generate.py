@@ -28,6 +28,8 @@ from nompower_pipeline.reddit import fetch_rss_entries
 from nompower_pipeline.render import env_for, render_to_file, write_asset
 
 CONFIG_PATH = ROOT / "nompower_pipeline" / "config.json"
+ADS_JSON_PATH = ROOT / "nompower_pipeline" / "ads.json"
+AD_STATE_PATH = ROOT / "data" / "ad_state.json"
 PROCESSED_PATH = ROOT / "processed_urls.txt"
 ARTICLES_PATH = ROOT / "data" / "articles.json"
 LAST_RUN_PATH = ROOT / "data" / "last_run.json"
