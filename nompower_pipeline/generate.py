@@ -22,9 +22,9 @@ from nompower_pipeline.util import (
     jaccard,
     sanitize_llm_html,
 )
-from .deepseek import DeepSeekClient
-from .reddit import fetch_rss_entries
-from .render import env_for, render_to_file, write_asset
+from nompower_pipeline.deepseek import DeepSeekClient
+from nompower_pipeline.reddit import fetch_rss_entries
+from nompower_pipeline.render import env_for, render_to_file, write_asset
 
 CONFIG_PATH = ROOT / "nompower_pipeline" / "config.json"
 PROCESSED_PATH = ROOT / "processed_urls.txt"
