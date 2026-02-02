@@ -306,10 +306,7 @@ def build_affiliate_section(article_id: str, title: str, summary: str, ads_catal
     <div class="muted">Category: {genre}</div>
   </div>
 
-  <p class="muted">
-    Based on today’s story, here’s a relevant option people often consider.
-    (This helps keep the site running.)
-  </p>
+  
 
   <div class="ad-slot ad-affiliate">
     {raw_code}
