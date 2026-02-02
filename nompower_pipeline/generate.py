@@ -207,7 +207,8 @@ def render_affiliate_section(ad: dict) -> str:
     if detail:
         parts.append(f"<p>{html.escape(detail)}</p>")
     # IMPORTANT: code is inserted raw (user-provided). Do NOT escape.
-    parts.append(f"<div class='aff-code'>{code}</div>")
+    parts.append(f"<p>{code}</p>")
+
     return "\n".join(parts).strip()
 
 def choose_ad(ads_catalog: dict, genre: str) -> dict | None:
