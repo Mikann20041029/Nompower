@@ -421,8 +421,8 @@ def deepseek_article(cfg: dict, item: dict) -> str:
     )
 
     user = f"""
-You are an expert tech journalist and high-conversion copywriter.
-Your goal is NOT to summarize the news. Your goal is: Create an URGENT "reader-benefit" briefing that makes the reader feel, "If I don't read this now, I'm losing money/security/time."
+You are a high-conversion Tech Analyst and SEO expert. 
+Your goal is NOT to report news, but to capture organic search traffic from users who are PANICKING or seeking an IMMEDIATE SOLUTION to a specific issue.
 
 OUTPUT RULES:
 - English only.
@@ -431,96 +431,68 @@ OUTPUT RULES:
 - Do NOT output <h1>.
 - Do NOT repeat the post title in the body.
 - Do NOT paste any affiliate code or scripts.
-- Do NOT invent facts. If unknown, explicitly say "Not stated in the source."
+- Do NOT invent facts.
 
 INPUT:
 Post title: {title}
 Permalink: {link}
-RSS summary snippet (may be partial): {summary}
+RSS summary snippet: {summary}
 
-TASK (Mental preparation):
-1) Identify the Persona: Who stands to lose the MOST (money, data, or reputation) from this news?
-2) Identify the Pain: What is the single most terrifying or frustrating consequence for them?
-3) Identify the Gain: What is the "unfair advantage" they get by knowing this 5 minutes before others?
+TASK:
+1) Identify the Persona: Who is the "Victim" or "At-risk user" right now? (e.g., "Active Windows gamers", "Gmail users with 2FA").
+2) Direct Answer: Provide a solution to the query "How to fix [X]" or "Is [X] safe?".
 
-IF YOU CANNOT GIVE CLEAR ACTIONS (Irrelevant/Low-value news):
+IF NO ACTIONABLE VALUE (e.g., vague industry rumors):
 - Start with: <p><strong>[SKIP: no actionable value]</strong></p>
-- Then add ONE short <p> explaining why (missing specifics, no impact, etc.).
 - Stop.
 
-OUTPUT STRUCTURE (Follow this EXACTLY for maximum impact):
+OUTPUT STRUCTURE:
 
-1) <p><strong>[CRITICAL SUMMARY]</strong>: <strong>2 lines of high-impact warning.</strong> Who is in immediate danger/losing out, and the single most urgent action to take right now.</p>
+1) <p><strong>[CRITICAL SUMMARY]</strong>: Write this as a direct, blunt answer to a search query. 
+   - Must name the PERSON (e.g., "Adobe Creative Cloud subscribers").
+   - Must name the LOSS (e.g., "account suspension", "silent data leak").
+   - Must start with a COMMAND verb (e.g., "Disconnect," "Check," "Update").
+   - Limit to 2 lines of high-impact warning.</p>
 
-2) <h2>Is this your problem?</h2>
-   <p>Check if you are in the "Danger Zone":</p>
-   <ul><li>5 yes/no conditions that describe the reader's current setup or behavior. Make them feel "This is about ME."</li></ul>
+2) <h2>Is your [Subject] affected?</h2>
+   <p>Check if you match these conditions immediately:</p>
+   <ul><li>5 specific yes/no conditions (e.g., "You are using version X.X").</li></ul>
 
-3) <h2>The Hidden Reality</h2>
-   <p>Summarize what changed, but focus on the <strong>IMPACT</strong>. Why does this matter more than people think? (2-3 sentences max, no fluff).</p>
+3) <h2>What happened (Impact-focused)</h2>
+   <p>Explain why this is a crisis for the reader, not the company. Focus on the risk of inaction (2-3 sentences).</p>
 
-4) <h2>Stop the Damage / Secure the Win</h2>
-   <ul><li>3-7 concrete, actionable steps. Use strong verbs (e.g., "Revoke," "Switch," "Deploy"). If information is missing, state what to watch out for.</li></ul>
+4) <h2>Do this now to protect yourself</h2>
+   <ul><li>3-7 concrete, actionable steps. No fluff. If steps are unknown, tell them what to monitor.</li></ul>
 
-5) <h2>The High Cost of Doing Nothing</h2>
-   <p>Explain the exact negative outcome (data loss, wasted cash, missed opportunity) in vivid detail. Be direct and blunt.</p>
+5) <h2>The Hidden Cost of Inaction</h2>
+   <p>Be blunt: What exactly is lost if the reader ignores this? (Money, data, privacy, or device performance).</p>
 
 6) <h2>Common Misconceptions</h2>
-   <ul><li>3-5 "dangerous myths" about this news that will cause people to fail.</li></ul>
+   <ul><li>3-5 "dangerous myths" about this news that lead to false security.</li></ul>
 
 7) <h2>Critical FAQ</h2>
-   <ul><li>5 high-stakes questions the reader is likely panicking about. If not in source, answer: "Not stated in the source."</li></ul>
+   <ul><li>5 urgent questions searchers are asking (e.g., "Can I get a refund?", "Is my data already gone?"). Answer: "Not stated in the source" if unknown.</li></ul>
 
-8) <h2>Verify Original Details</h2>
-   <p><a href="{link}" rel="nofollow noopener" target="_blank">Access the full source here</a></p>
+8) <h2>Source for Verification</h2>
+   <p><a href="{link}" rel="nofollow noopener" target="_blank">Access the full technical details here</a></p>
 
-9) <h2>Strategic Next Step</h2>
+9) <h2>Next Step (Strategic Solution)</h2>
    <p>
-   Write EXACTLY one transition paragraph (2–4 sentences) that bridges the current problem to a broader solution.
-   - Tone: Helpful, authoritative, and practical. 
-   - Strategy: "Since this news shows how vulnerable [Category] is, the smart long-term move is to [Related Best Practice]."
-   - NOT mention discounts, coupons, promo codes, prices, or "buy now."
+   Write a 2-4 sentence transition that bridges the manual fix above to a more reliable, automated, or professional standard. 
+   - Must reference ONE specific behavior from the "Do this now" section.
+   - Frame the solution as: "A way to make this process easier or more secure next time."
+   - DO NOT use salesy words (discount, coupon, buy now).
    - End with: "If you want a practical option people often use to handle this, here’s one."
-   Use the Ad context below for relevance.
    </p>
 
-AD CONTEXT (DO NOT SELL; only allow a neutral transition):
+AD CONTEXT:
 - Genre: {{AD_GENRE}}
 - Ad title: {{AD_TITLE}}
 - Ad detail: {{AD_DETAIL}}
 
-FINAL TOUCH:
-- Put it as the very last paragraph, max 2 sentences. Focus on "Choosing trusted standards/tools" in this domain to avoid scams or repeat issues.
+FINAL PARAGRAPH (Optional):
+- Maximum 2 sentences. Focus on how to verify sources in this domain (security/finance/tech) to stay safe long-term.
 """.strip()
-
-    # ---- Phase1: pick one affiliate ad by genre and feed details to the prompt ----
-    # Decide genre from title/summary (your classify_genre already exists)
-    genre = classify_genre(title, summary)
-
-    # Resolve ads.json path (keep your current location: nompower_pipeline/ads.json)
-    # If you already have ROOT defined earlier, use it; otherwise fall back to relative.
-    ads_path = str(Path("nompower_pipeline") / "ads.json")
-    ads_dict = load_ads(ads_path)
-    ad = pick_ad_for_genre(ads_dict, genre)
-
-    ad_title = (ad.get("title") if ad else "") or ""
-    ad_detail = (ad.get("detail") if ad else "") or ""
-    # Replace placeholders in the user prompt
-    user = (user
-            .replace("{AD_GENRE}", genre)
-            .replace("{AD_TITLE}", ad_title)
-            .replace("{AD_DETAIL}", ad_detail))
-
-    out = ds.chat(
-        model=model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        temperature=temp,
-        max_tokens=2400,
-    )
-    return sanitize_llm_html(out)
 
 
 
