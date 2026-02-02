@@ -845,7 +845,7 @@ def main() -> None:
 
     ads_catalog = load_ads_catalog()
     affiliate_html, chosen_ad_id = build_affiliate_section(
-        article_id=f"{datetime.now(timezone.utc).strftime('%Y-%m-%d')}-{slugify(llm_title or cand["title"])[:80] or 'post'}",
+        article_id=f"{datetime.now(timezone.utc).strftime('%Y-%m-%d')}-{slugify(llm_title or cand['title'])[:80] or 'post'}",
         title=llm_title or cand["title"],
         summary=cand.get("summary", "") or "",
         ads_catalog=ads_catalog,
@@ -861,7 +861,7 @@ def main() -> None:
     ts = datetime.now(timezone.utc)
 
     ymd = ts.strftime("%Y-%m-%d")
-    slug = slugify(llm_title or cand["title"])[:80] or f"post-{int(ts.timestamp())}"
+    slug =slugify(llm_title or cand['title'])[:80] or f"post-{int(ts.timestamp())}"
     path = f"/articles/{ymd}-{slug}.html"
     article_url = base_url + path
 
