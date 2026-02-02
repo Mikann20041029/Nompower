@@ -512,10 +512,11 @@ FINAL TOUCH:
     ad_title = (ad.get("title") if ad else "") or ""
     ad_detail = (ad.get("detail") if ad else "") or ""
     # Replace placeholders in the user prompt
-    user = (user
-            .replace("{AD_GENRE}", genre)
-            .replace("{AD_TITLE}", ad_title)
-            .replace("{AD_DETAIL}", ad_detail))
+        user = (user
+            .replace("{{AD_GENRE}}", genre)
+            .replace("{{AD_TITLE}}", ad_title)
+            .replace("{{AD_DETAIL}}", ad_detail))
+
 
     out = ds.chat(
     model=model,
