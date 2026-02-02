@@ -787,7 +787,7 @@ def main() -> None:
 print(f"[ads] chosen_ad_id={chosen_ad_id} affiliate_len={len(affiliate_html or '')}")
 
     # Append affiliate section at the end of the article body (phase1)
-    if affiliate_html:
+if affiliate_html:
         body_html = body_html.rstrip() + "\n\n" + affiliate_html + "\n"
 
     ts = datetime.now(timezone.utc)
