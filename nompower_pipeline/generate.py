@@ -839,8 +839,9 @@ def main() -> None:
         )
         return
 
-    body_html = deepseek_article(cfg, cand)
-    body_html = strip_leading_duplicate_title(body_html, cand["title"])
+    llm_title, body_html = deepseek_article(cfg, cand)
+    body_html = strip_leading_duplicate_title(body_html, llm_title or cand["title"])
+
 
     ads_catalog = load_ads_catalog()
     affiliate_html, chosen_ad_id = build_affiliate_section(
