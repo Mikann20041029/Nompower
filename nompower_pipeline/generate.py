@@ -199,14 +199,29 @@ def render_affiliate_section(ad: dict) -> str:
 
 def choose_ad(ads_catalog: dict, genre: str) -> dict | None:
     """
-    Phase1: random within genre. If empty -> general.
+    Phase1: random within genre.
+    If empty -> pick random from ALL ads (NO 'general' fallback).
     """
+    if not isinstance(ads_catalog, dict):
+        return None
+
     pool = ads_catalog.get(genre) or []
-    if not pool and genre != "general":
-        pool = ads_catalog.get("general") or []
+
+    # If genre pool is empty, fall back to "any ad" across all genres
+    if not pool:
+        all_ads: list[dict] = []
+        for k, v in ads_catalog.items():
+            if k == "general":
+                continue
+            if isinstance(v, list):
+                all_ads.extend([x for x in v if isinstance(x, dict)])
+        pool = all_ads
+
     if not pool:
         return None
+
     return random.choice(pool)
+
 
 
 def build_affiliate_section(article_id: str, title: str, summary: str, ads_catalog: dict, base_url: str) -> tuple[str, str | None]:
