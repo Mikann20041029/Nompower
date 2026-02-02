@@ -282,7 +282,8 @@ def build_affiliate_section(article_id: str, title: str, summary: str, ads_catal
     Uses Cloudflare Worker /go for click tracking and redirect.
     """
     genre = classify_genre(title, summary)
-    ad = choose_ad(ads_catalog, genre)
+    ad, picked_genre = choose_ad(ads_catalog, genre)
+
     if not ad:
         return ("", None)
 
