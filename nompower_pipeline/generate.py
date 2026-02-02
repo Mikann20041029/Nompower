@@ -166,14 +166,27 @@ def pick_ad_for_genre(ads_dict: dict, genre: str):
     # returns a single ad dict or None
     if not isinstance(ads_dict, dict):
         return None
-    pool = ads_dict.get(genre) or ads_dict.get("general") or []
+
+    pool = ads_dict.get(genre) or []
+
+    if not pool:
+        # fallback: pick from all genres (NO 'general')
+        all_ads = []
+        for k, v in ads_dict.items():
+            if k == "general":
+                continue
+            if isinstance(v, list):
+                all_ads.extend([x for x in v if isinstance(x, dict)])
+        pool = all_ads
+
     if not pool:
         return None
-    # simplest phase1: random pick
+
     try:
         return random.choice(pool)
     except Exception:
         return pool[0]
+
 
 def render_affiliate_section(ad: dict) -> str:
     """
