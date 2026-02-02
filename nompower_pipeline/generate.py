@@ -210,31 +210,69 @@ def render_affiliate_section(ad: dict) -> str:
     parts.append(f"<p>{code}</p>")
 
     return "\n".join(parts).strip()
+RELATED_GENRES: dict[str, list[str]] = {
+    # tech/news 系の近似
+    "tech": ["productivity", "education", "business"],
+    "ai": ["tech", "education", "productivity"],
+    "business": ["productivity", "tech", "education"],
 
-def choose_ad(ads_catalog: dict, genre: str) -> dict | None:
+    # インフラ・住環境系の近似
+    "home_improvement": ["health", "education", "tech"],
+    "energy": ["home_improvement", "tech", "business"],
+
+    # 健康・美容系の近似
+    "health": ["home_improvement", "education", "productivity"],
+    "beauty": ["health", "home_improvement", "productivity"],
+
+    # 旅行・ライフ系の近似
+    "travel": ["productivity", "home_improvement", "business"],
+}
+
+def choose_ad(ads_catalog: dict, genre: str) -> tuple[dict | None, str | None]:
     """
-    Phase1: random within genre.
-    If empty -> pick random from ALL ads (NO 'general' fallback).
+    Pick the closest possible ad by genre.
+    - Never use 'general'
+    - Prefer exact genre pool
+    - If empty, try RELATED_GENRES[genre] pools in order
+    - If still empty, pick random from ALL non-general ads
+    Returns: (ad_dict or None, picked_genre or None)
     """
     if not isinstance(ads_catalog, dict):
-        return None
+        return (None, None)
 
-    pool = ads_catalog.get(genre) or []
+    def pool_for(g: str) -> list[dict]:
+        v = ads_catalog.get(g) or []
+        if not isinstance(v, list):
+            return []
+        return [x for x in v if isinstance(x, dict) and str(x.get("code", "")).strip()]
 
-    # If genre pool is empty, fall back to "any ad" across all genres
-    if not pool:
-        all_ads: list[dict] = []
-        for k, v in ads_catalog.items():
-            if k == "general":
-                continue
-            if isinstance(v, list):
-                all_ads.extend([x for x in v if isinstance(x, dict)])
-        pool = all_ads
+    # 1) exact
+    if genre != "general":
+        pool = pool_for(genre)
+        if pool:
+            return (random.choice(pool), genre)
 
-    if not pool:
-        return None
+    # 2) related genres
+    for g in RELATED_GENRES.get(genre, []):
+        if g == "general":
+            continue
+        pool = pool_for(g)
+        if pool:
+            return (random.choice(pool), g)
 
-    return random.choice(pool)
+    # 3) last resort: any non-general
+    all_ads: list[dict] = []
+    for k, v in ads_catalog.items():
+        if k == "general":
+            continue
+        if isinstance(v, list):
+            all_ads.extend([x for x in v if isinstance(x, dict) and str(x.get("code", "")).strip()])
+
+    if not all_ads:
+        return (None, None)
+
+    return (random.choice(all_ads), None)
+
 
 
 
