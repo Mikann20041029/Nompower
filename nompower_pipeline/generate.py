@@ -400,7 +400,8 @@ def pick_candidate(cfg: dict, processed: set[str], articles: list[dict]) -> dict
     return candidates[0] if candidates else None
 
 
-def deepseek_article(cfg: dict, item: dict) -> str:
+def deepseek_article(cfg: dict, item: dict) -> tuple[str, str]:
+
     ds = DeepSeekClient()
     model = cfg["generation"]["model"]
     target_words = int(cfg["generation"]["target_words"])
@@ -425,6 +426,11 @@ You are an expert tech journalist and high-conversion copywriter.
 Your goal is NOT to summarize the news. Your goal is: Create an URGENT "reader-benefit" briefing that makes the reader feel, "If I don't read this now, I'm losing money/security/time."
 
 OUTPUT RULES:
+VERY IMPORTANT OUTPUT FORMAT:
+- First line MUST be: TITLE: <your best SEO-friendly title>
+- Second line MUST be empty (blank line).
+- From the third line, output the HTML body only (allowed tags only).
+
 - English only.
 - HTML body only.
 - Allowed tags: <p>, <h2>, <ul>, <li>, <strong>, <code>, <a>
@@ -512,15 +518,34 @@ FINAL TOUCH:
             .replace("{AD_DETAIL}", ad_detail))
 
     out = ds.chat(
-        model=model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        temperature=temp,
-        max_tokens=2400,
-    )
-    return sanitize_llm_html(out)
+    model=model,
+    messages=[
+        {"role": "system", "content": system},
+        {"role": "user", "content": user},
+    ],
+    temperature=temp,
+    max_tokens=2400,
+)
+
+# ---- Make it robust: out can be None/empty ----
+out = (out or "").strip()
+
+# Expect:
+# TITLE: ...
+#
+# <p>...</p>...
+m = re.match(r"(?is)^\s*TITLE:\s*(.+?)\s*\n\s*\n(.*)$", out)
+if m:
+    llm_title = m.group(1).strip()
+    llm_html = m.group(2).strip()
+else:
+    # Fallback if DeepSeek didn't follow format
+    llm_title = (item.get("title") or "").strip()
+    llm_html = out
+
+llm_html = sanitize_llm_html(llm_html or "")
+return (llm_title, llm_html)
+
 
 
 
