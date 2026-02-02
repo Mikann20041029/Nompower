@@ -528,22 +528,33 @@ FINAL TOUCH:
 )
 
 # ---- Make it robust: out can be None/empty ----
-out = (out or "").strip()
+    out = ds.chat(
+        model=model,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        temperature=temp,
+        max_tokens=2400,
+    )
 
-# Expect:
-# TITLE: ...
-#
-# <p>...</p>...
-m = re.match(r"(?is)^\s*TITLE:\s*(.+?)\s*\n\s*\n(.*)$", out)
-if m:
-    llm_title = m.group(1).strip()
-    llm_html = m.group(2).strip()
-else:
-    # Fallback if DeepSeek didn't follow format
-    llm_title = (item.get("title") or "").strip()
-    llm_html = out
+    # ---- Make it robust: out can be None/empty ----
+    out = (out or "").strip()
 
-llm_html = sanitize_llm_html(llm_html or "")
+    # Expect:
+    # TITLE: ...
+    #
+    # <p>...</p>...
+    m = re.match(r"(?is)^\s*TITLE:\s*(.+?)\s*\n\s*\n(.*)$", out)
+    if m:
+        llm_title = m.group(1).strip()
+        llm_html = m.group(2).strip()
+    else:
+        # Fallback if DeepSeek didn't follow format
+        llm_title = (item.get("title") or "").strip()
+        llm_html = out
+
+    llm_html = sanitize_llm_html(llm_html or "")
     return (llm_title, llm_html)
 
 
