@@ -411,46 +411,86 @@ def deepseek_article(cfg: dict, item: dict) -> str:
     summary = item.get("summary", "")
 
     system = (
-        "You are an editorial writer for a tech/news digest site. "
-        "Write in English only. Do not fabricate facts. If uncertain, label it clearly as speculation. "
-        "Be energetic and slightly hyped, but keep it accurate and non-defamatory. "
-        "Avoid copyrighted copying; paraphrase and add original commentary and takeaways. "
-        "No adult content, hate, or self-harm content."
+        "You are a high-performance conversion copywriter and tech analyst. "
+        "Your mission is to write content that grabs attention, triggers the reader's survival instinct (FOMO), "
+        "and provides immediate, actionable solutions. "
+        "Write in English only. Do not fabricate facts. "
+        "Be punchy, direct, and slightly provocative to drive clicks, but remain ethically grounded. "
+        "Your goal is to make the reader feel that ignoring this info is a mistake. "
+        "Always focus on the 'What's in it for me?' for the reader."
     )
 
     user = f"""
-Write an original article (HTML body only; use <p>, <h2>, <ul><li>) based on this Reddit post.
+You are an expert tech journalist and high-conversion copywriter.
+Your goal is NOT to summarize the news. Your goal is: Create an URGENT "reader-benefit" briefing that makes the reader feel, "If I don't read this now, I'm losing money/security/time."
 
-IMPORTANT:
+OUTPUT RULES:
+- English only.
+- HTML body only.
+- Allowed tags: <p>, <h2>, <ul>, <li>, <strong>, <code>, <a>
+- Do NOT output <h1>.
 - Do NOT repeat the post title in the body.
-- Do NOT output <h1> under any circumstances.
-- Start directly with a short hook paragraph (<p>).
-- Use <h2> for section headings only.
+- Do NOT paste any affiliate code or scripts.
+- Do NOT invent facts. If unknown, explicitly say "Not stated in the source."
 
+INPUT:
 Post title: {title}
 Permalink: {link}
 RSS summary snippet (may be partial): {summary}
 
-Structure (keep the first half as normal news digest):
-1) Hook (1 short paragraph)
-2) What happened (2-3 paragraphs)
-3) Why people care (2-3 paragraphs)
-4) Practical takeaways (bullet list)
-5) Smooth bridge to a relevant recommendation (1-2 short paragraphs) using the "Ad context" below.
-   - Do NOT paste links.
-   - Do NOT include <script>.
-   - Just write the transition text naturally.
-6) End with a short closing paragraph.
+TASK (Mental preparation):
+1) Identify the Persona: Who stands to lose the MOST (money, data, or reputation) from this news?
+2) Identify the Pain: What is the single most terrifying or frustrating consequence for them?
+3) Identify the Gain: What is the "unfair advantage" they get by knowing this 5 minutes before others?
 
-Ad context (for the bridge text only; do not paste the code itself):
+IF YOU CANNOT GIVE CLEAR ACTIONS (Irrelevant/Low-value news):
+- Start with: <p><strong>[SKIP: no actionable value]</strong></p>
+- Then add ONE short <p> explaining why (missing specifics, no impact, etc.).
+- Stop.
+
+OUTPUT STRUCTURE (Follow this EXACTLY for maximum impact):
+
+1) <p><strong>[CRITICAL SUMMARY]</strong>: <strong>2 lines of high-impact warning.</strong> Who is in immediate danger/losing out, and the single most urgent action to take right now.</p>
+
+2) <h2>Is this your problem?</h2>
+   <p>Check if you are in the "Danger Zone":</p>
+   <ul><li>5 yes/no conditions that describe the reader's current setup or behavior. Make them feel "This is about ME."</li></ul>
+
+3) <h2>The Hidden Reality</h2>
+   <p>Summarize what changed, but focus on the <strong>IMPACT</strong>. Why does this matter more than people think? (2-3 sentences max, no fluff).</p>
+
+4) <h2>Stop the Damage / Secure the Win</h2>
+   <ul><li>3-7 concrete, actionable steps. Use strong verbs (e.g., "Revoke," "Switch," "Deploy"). If information is missing, state what to watch out for.</li></ul>
+
+5) <h2>The High Cost of Doing Nothing</h2>
+   <p>Explain the exact negative outcome (data loss, wasted cash, missed opportunity) in vivid detail. Be direct and blunt.</p>
+
+6) <h2>Common Misconceptions</h2>
+   <ul><li>3-5 "dangerous myths" about this news that will cause people to fail.</li></ul>
+
+7) <h2>Critical FAQ</h2>
+   <ul><li>5 high-stakes questions the reader is likely panicking about. If not in source, answer: "Not stated in the source."</li></ul>
+
+8) <h2>Verify Original Details</h2>
+   <p><a href="{link}" rel="nofollow noopener" target="_blank">Access the full source here</a></p>
+
+9) <h2>Strategic Next Step</h2>
+   <p>
+   Write EXACTLY one transition paragraph (2–4 sentences) that bridges the current problem to a broader solution.
+   - Tone: Helpful, authoritative, and practical. 
+   - Strategy: "Since this news shows how vulnerable [Category] is, the smart long-term move is to [Related Best Practice]."
+   - NOT mention discounts, coupons, promo codes, prices, or "buy now."
+   - End with: "If you want a practical option people often use to handle this, here’s one."
+   Use the Ad context below for relevance.
+   </p>
+
+AD CONTEXT (DO NOT SELL; only allow a neutral transition):
 - Genre: {{AD_GENRE}}
 - Ad title: {{AD_TITLE}}
 - Ad detail: {{AD_DETAIL}}
 
-Safety/Accuracy:
-- Do NOT invent numbers, quotes, or events.
-- If uncertain, say what's unknown and what would confirm it.
-- Keep it safe for general audiences.
+FINAL TOUCH:
+- Put it as the very last paragraph, max 2 sentences. Focus on "Choosing trusted standards/tools" in this domain to avoid scams or repeat issues.
 """.strip()
 
     # ---- Phase1: pick one affiliate ad by genre and feed details to the prompt ----
