@@ -747,6 +747,7 @@ def main() -> None:
         ads_catalog=ads_catalog,
         base_url=base_url
     )
+print(f"[ads] chosen_ad_id={chosen_ad_id} affiliate_len={len(affiliate_html or '')}")
 
     # Append affiliate section at the end of the article body (phase1)
     if affiliate_html:
