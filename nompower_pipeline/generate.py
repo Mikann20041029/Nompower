@@ -776,21 +776,24 @@ def main() -> None:
 
     body_html = deepseek_article(cfg, cand)
     body_html = strip_leading_duplicate_title(body_html, cand["title"])
+
     ads_catalog = load_ads_catalog()
     affiliate_html, chosen_ad_id = build_affiliate_section(
         article_id=f"{datetime.now(timezone.utc).strftime('%Y-%m-%d')}-{slugify(cand['title'])[:80] or 'post'}",
         title=cand["title"],
         summary=cand.get("summary", "") or "",
         ads_catalog=ads_catalog,
-        base_url=base_url
+        base_url=base_url,
     )
-print(f"[ads] chosen_ad_id={chosen_ad_id} affiliate_len={len(affiliate_html or '')}")
+
+    print(f"[ads] chosen_ad_id={chosen_ad_id} affiliate_len={len(affiliate_html or '')}")
 
     # Append affiliate section at the end of the article body (phase1)
-if affiliate_html:
+    if affiliate_html:
         body_html = body_html.rstrip() + "\n\n" + affiliate_html + "\n"
 
     ts = datetime.now(timezone.utc)
+
     ymd = ts.strftime("%Y-%m-%d")
     slug = slugify(cand["title"])[:80] or f"post-{int(ts.timestamp())}"
     path = f"/articles/{ymd}-{slug}.html"
